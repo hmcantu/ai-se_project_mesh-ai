@@ -1,16 +1,13 @@
 import express from 'express';
+import router from './routes/index.js';
 
 const app = express();
 const port = 3000;
 
-// Basic middleware to parse JSON
 app.use(express.json());
 
-// A simple health check route
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'MeshAI API is live' });
-});
+app.use(router);
 
 app.listen(port, () => {
-  console.info(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
