@@ -8,7 +8,13 @@ const port = 3000;
 
 app.use(express.json());
 app.use(logger);
+
 app.use(router);
+
+app.get('/test-error', () => {
+  throw new Error('Test error');
+});
+
 app.use(notFoundHandler);
 app.use(errorHandler);
 
