@@ -1,32 +1,43 @@
 import dotenv from 'dotenv'; 
 dotenv.config();
 import express from 'express';
+import mongoose from 'mongoose'; // Make sure to add this import if it isn't there!
 import router from './routes/index.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler, errorHandler } from './middleware/error.js';
 
-
+// 1. Checkpoints & Key Masking (Happens first)
 console.log("MONGO_URI:", process.env.MONGO_URI ? "✅ Connected/Defined" : "❌ undefined");
-
-// Shows just the first 7 characters of your key (e.g., nsk-a1b...)
 const apiKey = process.env.NEBIUS_API_KEY;
 console.log("NEBIUS_API_KEY:", apiKey ? `${apiKey.substring(0, 7)}...` : "❌ undefined");
 
+// 2. Constants & App Setup
 const app = express();
 const port = Number(process.env.PORT || 3000);
 
+// 3. Global Middleware
 app.use(express.json());
 app.use(logger);
 
+// 4. Routes
 app.use(router);
 
 app.get('/test-error', () => {
   throw new Error('Test error');
 });
 
+// 5. Error Handlers (Must be after routes, but before server start)
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.info(`Server running on port ${port}`);
-});
+// 6. Database Connection & Server Start (Always at the very bottom)
+mongoose.connect(process.env.MONGO_URI!)
+  .then(() => {
+    console.log('MongoDB connected successfully! 🎉');
+    app.listen(port, () => {
+      console.info(`Server running on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Database connection error ❌', err);
+  });
