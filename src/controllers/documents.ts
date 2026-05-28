@@ -1,5 +1,11 @@
-import { type Request, type Response, type NextFunction } from 'express';
+import fs from 'fs';
+import path from 'path';
+import type { Request, Response, NextFunction } from 'express';
+import pdf from 'pdf-parse';
 import { DocumentModel } from '../models/document.js';
+import { Chunk } from '../models/chunk.js';
+import { chunkText } from '../utils/chunk.js';
+import { createEmbedding } from '../utils/embeddings.js';
 
 export const uploadDocument = async (
   req: Request,
@@ -18,9 +24,22 @@ export const uploadDocument = async (
       return;
     }
 
-    // 2. Extract original name or use the randomized disk filename
     const title = req.body.title || req.file.originalname;
     const fileName = req.file.filename;
+
+    // 2. Resolve the staged file path and parse text out of the PDF
+    const filePath = path.join(process.cwd(), 'uploads', fileName);
+    const dataBuffer = fs.readFileSync(filePath);
+    const parsedPdf = await pdf(dataBuffer);
+    const extractedText = parsedPdf.text;
+
+    if (!extractedText || extractedText.trim().length === 0) {
+      res.status(400).json({
+        success: false,
+        error: 'The uploaded PDF appears to be empty or contains unreadable text.',
+      });
+      return;
+    }
 
     // 3. Create a Document record in MongoDB tracking the reference
     const newDoc = new DocumentModel({
@@ -30,7 +49,22 @@ export const uploadDocument = async (
     });
     await newDoc.save();
 
-    // 4. Return standard envelope response
+    // 4. Break the extracted text into 500-character segments
+    const textChunks = chunkText(extractedText);
+
+    // 5. Fire async embedding requests and build sub-records concurrently
+    await Promise.all(
+      textChunks.map(async (text) => {
+        const embedding = await createEmbedding(text);
+        return Chunk.create({
+          documentId: newDoc._id,
+          text,
+          embedding,
+        });
+      })
+    );
+
+    // 6. Return standard envelope response
     res.status(201).json({
       success: true,
       data: newDoc,
