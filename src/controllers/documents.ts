@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { Request, Response, NextFunction } from 'express';
-import pdf from 'pdf-parse';
+import * as pdf from 'pdf-parse';
 import { DocumentModel } from '../models/document.js';
 import { Chunk } from '../models/chunk.js';
 import { chunkText } from '../utils/chunk.js';
