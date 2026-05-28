@@ -1,14 +1,19 @@
 import { Router } from 'express';
+import multer from 'multer';
 import * as docCtrl from '../controllers/documents.js';
-// 1. Import the middleware
 import { auth } from '../middleware/auth.js';
 
 const router = Router();
 
-// 2. Protect all document routes
+// Protect all document routes
 router.use(auth);
 
-router.post('/', docCtrl.uploadDocument);
+// Configure Multer to stage files in the uploads/ directory
+const upload = multer({ dest: 'uploads/' });
+
+// Pass the upload middleware before executing your controller
+router.post('/', upload.single('file'), docCtrl.uploadDocument);
+
 router.get('/', docCtrl.getDocuments);
 router.get('/:id', docCtrl.getDocumentById);
 router.patch('/:id', docCtrl.updateDocument);
