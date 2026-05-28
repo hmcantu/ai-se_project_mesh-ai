@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import type { Request, Response, NextFunction } from 'express';
-import * as pdf from 'pdf-parse';
+// @ts-ignore - pdf-parse-fork does not require explicit external type files
+import pdf from 'pdf-parse-fork';
 import { DocumentModel } from '../models/document.js';
 import { Chunk } from '../models/chunk.js';
 import { chunkText } from '../utils/chunk.js';
@@ -27,9 +28,11 @@ export const uploadDocument = async (
     const title = req.body.title || req.file.originalname;
     const fileName = req.file.filename;
 
-    // 2. Resolve the staged file path and parse text out of the PDF
+    // 2. Resolve the staged file path and parse text out of the PDF properly
     const filePath = path.join(process.cwd(), 'uploads', fileName);
     const dataBuffer = fs.readFileSync(filePath);
+    
+    // Decompresses and extracts the real text cleanly from the PDF binary
     const parsedPdf = await pdf(dataBuffer);
     const extractedText = parsedPdf.text;
 
