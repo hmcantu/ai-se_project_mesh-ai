@@ -7,9 +7,9 @@ import { logger } from './middleware/logger.js';
 import { notFoundHandler, errorHandler } from './middleware/error.js';
 
 // 1. Checkpoints & Key Masking (Happens first)
-console.log("MONGO_URI:", process.env.MONGO_URI ? "✅ Connected/Defined" : "❌ undefined");
+console.info("MONGO_URI:", process.env.MONGO_URI ? "✅ Connected/Defined" : "❌ undefined");
 const apiKey = process.env.NEBIUS_API_KEY;
-console.log("NEBIUS_API_KEY:", apiKey ? `${apiKey.substring(0, 7)}...` : "❌ undefined");
+console.info("NEBIUS_API_KEY:", apiKey ? `${apiKey.substring(0, 7)}...` : "❌ undefined");
 
 // 2. Constants & App Setup
 const app = express();
@@ -33,7 +33,7 @@ app.use(errorHandler);
 // 6. Database Connection & Server Start (Always at the very bottom)
 mongoose.connect(process.env.MONGO_URI!)
   .then(() => {
-    console.log('MongoDB connected successfully! 🎉');
+    console.info('MongoDB connected successfully! 🎉'); // Changed from log to info
     app.listen(port, () => {
       console.info(`Server running on port ${port}`);
     });

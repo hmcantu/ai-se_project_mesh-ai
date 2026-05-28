@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import * as chatCtrl from '../controllers/chats.js';
+import { auth } from '../middleware/auth.js'; 
 
 const router = Router();
+
+router.use(auth);
 
 router.post('/', chatCtrl.createChat);
 router.get('/', chatCtrl.getChats);
