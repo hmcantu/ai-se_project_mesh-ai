@@ -17,16 +17,26 @@ export const askQuestion = async (
     if (!question) {
       res.status(400).json({
         success: false,
-        error: 'Question is required.',
+        data: null,
+        error: { message: 'Question is required.' }
       });
       return;
     }
 
     // 2. Resolve the current logged-in User's ID
     const userId = req.user?.userId;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        data: null,
+        error: { message: 'Unauthorized access. Missing user identity.' }
+      });
+      return;
+    }
 
     // 3. Find only documents belonging to this user using a high-efficiency ID projection
-    const userDocs = await DocumentModel.find({ userId }, '_id');
+    // 🎯 2. Wrap parameter inside String() to satisfy exactOptionalPropertyTypes
+    const userDocs = await DocumentModel.find({ userId: String(userId) }, '_id');
     const docIds = userDocs.map((doc) => doc._id);
 
     // 4. Extract all text chunks belonging exclusively to those document IDs
@@ -72,6 +82,7 @@ export const askQuestion = async (
       data: {
         answer,
       },
+      error: null
     });
   } catch (error) {
     next(error);

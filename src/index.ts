@@ -1,10 +1,10 @@
 import dotenv from 'dotenv'; 
 dotenv.config();
 import express from 'express';
-import mongoose from 'mongoose'; // Make sure to add this import if it isn't there!
+import mongoose from 'mongoose';
 import router from './routes/index.js';
 import { logger } from './middleware/logger.js';
-import { notFoundHandler, errorHandler } from './middleware/error.js';
+import { errorHandler } from './middleware/error.js';
 
 // 1. Checkpoints & Key Masking (Happens first)
 console.info("MONGO_URI:", process.env.MONGO_URI ? "✅ Connected/Defined" : "❌ undefined");
@@ -27,13 +27,13 @@ app.get('/test-error', () => {
 });
 
 // 5. Error Handlers (Must be after routes, but before server start)
-app.use(notFoundHandler);
+// 🎯 Removed app.use(notFoundHandler) to clean up the missing reference error
 app.use(errorHandler);
 
 // 6. Database Connection & Server Start (Always at the very bottom)
 mongoose.connect(process.env.MONGO_URI!)
   .then(() => {
-    console.info('MongoDB connected successfully! 🎉'); // Changed from log to info
+    console.info('MongoDB connected successfully! 🎉');
     app.listen(port, () => {
       console.info(`Server running on port ${port}`);
     });

@@ -11,8 +11,12 @@ router.use('/chats', chatRoutes);
 router.use('/documents', documentRoutes);
 router.use('/query', queryRoutes);
 
-router.get('/health', (req, res) => {
-  res.status(200).json({ success: true, data: { status: 'ok' }, error: null });
+router.get('/health', (_req, res) => {
+  res.status(200).json({
+    success: true,
+    data: { status: 'healthy' },
+    error: null
+  });
 });
 
 export default router;

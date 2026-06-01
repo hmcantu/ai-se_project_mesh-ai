@@ -21,20 +21,32 @@ export const register = async (
 
     // 1. Validate presence
     if (!email || !password || !name) {
-      res.status(400).json({ error: 'Email, password, and name are required.' });
+      res.status(400).json({ 
+        success: false,
+        data: null,
+        error: { message: 'Email, password, and name are required.' }
+      });
       return;
     }
 
     // 2. Validate password length
     if (password.length < 8) {
-      res.status(400).json({ error: 'Password must be at least 8 characters long.' });
+      res.status(400).json({ 
+        success: false,
+        data: null,
+        error: { message: 'Password must be at least 8 characters long.' }
+      });
       return;
     }
 
-    // 5. Check if user already exists
+    // 3. Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      res.status(409).json({ error: 'A user with this email already exists.' });
+      res.status(409).json({ 
+        success: false,
+        data: null,
+        error: { message: 'A user with this email already exists.' }
+      });
       return;
     }
 
@@ -47,11 +59,15 @@ export const register = async (
     });
     await newUser.save();
 
-    // 6. Return 201 with user data (minus password)
+    // 5. Return 201 with standardized envelope layout
     res.status(201).json({
-      _id: newUser._id,
-      email: newUser.email,
-      name: newUser.name,
+      success: true,
+      data: {
+        _id: newUser._id,
+        email: newUser.email,
+        name: newUser.name,
+      },
+      error: null
     });
   } catch (error) {
     next(error);
@@ -68,7 +84,11 @@ export const login = async (
 
     // 1. Validate presence
     if (!email || !password) {
-      res.status(400).json({ error: 'Email and password are required.' });
+      res.status(400).json({ 
+        success: false,
+        data: null,
+        error: { message: 'Email and password are required.' }
+      });
       return;
     }
 
@@ -78,14 +98,22 @@ export const login = async (
     // 2. Find user
     const user = await User.findOne({ email });
     if (!user) {
-      res.status(401).json({ error: invalidCredentialsMessage });
+      res.status(401).json({ 
+        success: false,
+        data: null,
+        error: { message: invalidCredentialsMessage }
+      });
       return;
     }
 
     // 3. Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({ error: invalidCredentialsMessage });
+      res.status(401).json({ 
+        success: false,
+        data: null,
+        error: { message: invalidCredentialsMessage }
+      });
       return;
     }
 
@@ -96,14 +124,18 @@ export const login = async (
       { expiresIn: '24h' }
     );
 
-    // 5. Send 200 with token and user data
+    // 5. Send 200 with standard layout format
     res.status(200).json({
-      token,
-      user: {
-        _id: user._id,
-        email: user.email,
-        name: user.name,
+      success: true,
+      data: {
+        token,
+        user: {
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+        }
       },
+      error: null
     });
   } catch (error) {
     next(error);
@@ -113,22 +145,34 @@ export const login = async (
 export const getCurrentUser = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction // 🎯 Prefixed with '_' to satisfy strict unused parameter validation rules
 ): Promise<void> => {
   try {
     if (!req.user || !req.user.userId) {
-      res.status(401).json({ error: 'Unauthorized.' });
+      res.status(401).json({ 
+        success: false,
+        data: null,
+        error: { message: 'Unauthorized.' }
+      });
       return;
     }
 
     const user = await User.findById(req.user.userId).select('-password');
     if (!user) {
-      res.status(404).json({ error: 'User not found.' });
+      res.status(404).json({ 
+        success: false,
+        data: null,
+        error: { message: 'User not found.' }
+      });
       return;
     }
 
-    res.status(200).json(user);
+    res.status(200).json({
+      success: true,
+      data: user,
+      error: null
+    });
   } catch (error) {
-    next(error);
+    _next(error);
   }
 };

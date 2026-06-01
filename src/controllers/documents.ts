@@ -20,7 +20,10 @@ export const uploadDocument = async (
     if (!req.file) {
       res.status(400).json({
         success: false,
-        error: 'No file uploaded. Please attach a file under the key "file".',
+        data: null,
+        error: {
+          message: 'No file uploaded. Please attach a file under the key "file".'
+        }
       });
       return;
     }
@@ -39,7 +42,10 @@ export const uploadDocument = async (
     if (!extractedText || extractedText.trim().length === 0) {
       res.status(400).json({
         success: false,
-        error: 'The uploaded PDF appears to be empty or contains unreadable text.',
+        data: null,
+        error: {
+          message: 'The uploaded PDF appears to be empty or contains unreadable text.'
+        }
       });
       return;
     }
@@ -71,6 +77,7 @@ export const uploadDocument = async (
     res.status(201).json({
       success: true,
       data: newDoc,
+      error: null
     });
   } catch (error) {
     next(error);
@@ -85,12 +92,21 @@ export const getDocuments = async (
   try {
     const userId = req.user?.userId;
 
-    // Find all documents scoped exclusively to the logged-in user
-    const documents = await DocumentModel.find({ userId });
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        data: null,
+        error: { message: 'Unauthorized access. Missing user identity.' }
+      });
+      return;
+    }
+
+    const documents = await DocumentModel.find({ userId: String(userId) });
 
     res.status(200).json({
       success: true,
       data: documents,
+      error: null
     });
   } catch (error) {
     next(error);
@@ -98,18 +114,51 @@ export const getDocuments = async (
 };
 
 // Placeholders for remaining endpoints to prevent router compilation errors
-export const getDocumentById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try { res.status(501).json({ success: false, error: 'Not implemented.' }); } catch (e) { next(e); }
+// 🎯 Added '_' prefix to unused 'next' parameters to guarantee flawless TS build execution
+export const getDocumentById = async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
+  try { 
+    res.status(501).json({ 
+      success: false, 
+      data: null,
+      error: { message: 'Not implemented.' } 
+    }); 
+  } catch (e) { 
+    _next(e); 
+  }
 };
 
-export const updateDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try { res.status(501).json({ success: false, error: 'Not implemented.' }); } catch (e) { next(e); }
+export const updateDocument = async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
+  try { 
+    res.status(501).json({ 
+      success: false, 
+      data: null,
+      error: { message: 'Not implemented.' } 
+    }); 
+  } catch (e) { 
+    _next(e); 
+  }
 };
 
-export const deleteDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try { res.status(501).json({ success: false, error: 'Not implemented.' }); } catch (e) { next(e); }
+export const deleteDocument = async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
+  try { 
+    res.status(501).json({ 
+      success: false, 
+      data: null,
+      error: { message: 'Not implemented.' } 
+    }); 
+  } catch (e) { 
+    _next(e); 
+  }
 };
 
-export const ingestDocument = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try { res.status(501).json({ success: false, error: 'Not implemented.' }); } catch (e) { next(e); }
+export const ingestDocument = async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
+  try { 
+    res.status(501).json({ 
+      success: false, 
+      data: null,
+      error: { message: 'Not implemented.' } 
+    }); 
+  } catch (e) { 
+    _next(e); 
+  }
 };

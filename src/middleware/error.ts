@@ -1,27 +1,20 @@
 import type { Request, Response, NextFunction } from 'express';
 
-// 1. The "Route Not Found" (404) Handler
-export const notFoundHandler = (req: Request, res: Response): void => {
-  res.status(404).json({
-    success: false,
-    data: null,
-    error: `Route ${req.method} ${req.path} not found`,
-  });
-};
-
-// 2. The Server Error (500) Handler
 export const errorHandler = (
-  err: Error,
-  req: Request,
+  err: any,
+  _req: Request,
   res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction
+  _next: NextFunction
 ): void => {
-  console.error(err.stack);
-
-  res.status(500).json({
+  console.error(err);
+  
+  const statusCode = err.status || 500;
+  
+  res.status(statusCode).json({
     success: false,
     data: null,
-    error: 'An error has occurred on the server',
+    error: {
+      message: err.message || 'An unexpected error occurred on the server.'
+    }
   });
 };
