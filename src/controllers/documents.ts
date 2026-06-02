@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { Request, Response, NextFunction } from 'express';
-// @ts-ignore - pdf-parse-fork does not require explicit external type files
+// @ts-expect-error - pdf-parse-fork does not require explicit external type files
 import pdf from 'pdf-parse-fork';
 import { DocumentModel } from '../models/document.js';
 import { Chunk } from '../models/chunk.js';

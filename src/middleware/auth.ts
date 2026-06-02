@@ -10,7 +10,6 @@ export const auth = async (
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      // 🎯 Standardized failure response shape
       res.status(401).json({ 
         success: false,
         data: null,
@@ -30,15 +29,14 @@ export const auth = async (
       return;
     }
 
-    // Read secret directly, and cast using an object shape instead of 'any'
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as Record<string, unknown>;
 
     req.user = {
-      userId: decoded.userId,
+      userId: String(decoded['userId'] || ''),
     };
 
     next();
-  } catch (_err) { // 🎯 Prefixing with an underscore keeps empty catch statements from throwing style errors
+  } catch { 
     res.status(401).json({ 
       success: false,
       data: null,

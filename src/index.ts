@@ -4,7 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import router from './routes/index.js';
 import { logger } from './middleware/logger.js';
-import { errorHandler } from './middleware/error.js';
+import { notFoundHandler, errorHandler } from './middleware/error.js';
 
 // 1. Checkpoints & Key Masking (Happens first)
 console.info("MONGO_URI:", process.env.MONGO_URI ? "✅ Connected/Defined" : "❌ undefined");
@@ -21,13 +21,7 @@ app.use(logger);
 
 // 4. Routes
 app.use(router);
-
-app.get('/test-error', () => {
-  throw new Error('Test error');
-});
-
-// 5. Error Handlers (Must be after routes, but before server start)
-// 🎯 Removed app.use(notFoundHandler) to clean up the missing reference error
+app.use(notFoundHandler);
 app.use(errorHandler);
 
 // 6. Database Connection & Server Start (Always at the very bottom)

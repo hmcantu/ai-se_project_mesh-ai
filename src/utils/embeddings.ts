@@ -2,6 +2,20 @@ import 'dotenv/config';
 
 const EMBEDDING_MODEL = 'Qwen/Qwen3-Embedding-8B';
 
+interface NebiusEmbeddingResponse {
+  data: Array<{
+    embedding: number[];
+    index: number;
+    object: string;
+  }>;
+  model: string;
+  object: string;
+  usage: {
+    prompt_tokens: number;
+    total_tokens: number;
+  };
+}
+
 export const createEmbedding = async (text: string): Promise<number[]> => {
   const apiKey = process.env.NEBIUS_API_KEY;
 
@@ -9,7 +23,7 @@ export const createEmbedding = async (text: string): Promise<number[]> => {
     throw new Error('Critical Error: NEBIUS_API_KEY is completely missing from process.env inside embeddings.ts');
   }
 
-  // 🎯 Bypassing the OpenAI SDK entirely to communicate directly with Nebius endpoints
+  // Bypassing the OpenAI SDK entirely to communicate directly with Nebius endpoints
   const response = await fetch('https://api.studio.nebius.ai/v1/embeddings', {
     method: 'POST',
     headers: {
@@ -27,7 +41,7 @@ export const createEmbedding = async (text: string): Promise<number[]> => {
     throw new Error(`Nebius API Error (Status ${response.status}): ${errorText || 'No error body returned'}`);
   }
 
-  const json = (await response.json()) as any;
+  const json = (await response.json()) as NebiusEmbeddingResponse;
   
   if (!json.data?.[0]?.embedding) {
     throw new Error('Failed to find embedding vector inside Nebius API response JSON payload');
