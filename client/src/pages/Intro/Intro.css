@@ -2,27 +2,71 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  
-  /* Stretch to fit viewport vertically */
   flex-grow: 1;
-  
-  /* Center vertically */
   justify-content: center;
-  
-  /* Center horizontally */
   margin: 0 auto;
-  max-width: 670px;
-  padding: 0 16px;
+  max-width: 870px;
+  width: 100%;
+  padding: 40px 24px;
   box-sizing: border-box;
 }
 
+.intro__title {
+  font-family: "Space Grotesk", Arial, sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #1C1C1C;
+  margin: 0 0 40px 0;
+}
+
+.intro__grid {
+  display: flex;
+  gap: 32px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.intro__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  background-color: #F4F2FA;
+  padding: 16px;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.intro__card-icon {
+  width: 106px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 24px;
+}
+
+.intro__card-text {
+  font-family: "Work Sans", Arial, sans-serif;
+  font-size: 18px;
+  line-height: 140%;
+  color: #1C1C1C;
+  margin: 0;
+}
+
+.intro__prompt {
+  font-family: "Work Sans", Arial, sans-serif;
+  font-size: 20px;
+  color: #1C1C1C;
+  margin: 0 0 24px 0;
+}
+
 .intro__start-btn {
+  font-family: "Space Grotesk", Arial, sans-serif;
   background-color: #1C1C1C;
   color: #FFFFFF;
-  padding: 12px 24px;
+  padding: 12px 32px;
   border-radius: 8px;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 18px;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
