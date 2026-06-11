@@ -2,15 +2,8 @@ import { Routes, Route } from "react-router-dom";
 import AppLayout from "../AppLayout/AppLayout";
 import KnowledgeBase from "../../pages/KnowledgeBase/KnowledgeBase";
 import Intro from "../../pages/Intro/Intro";
+import ChatBox from "../../components/ChatBox/ChatBox";
 import "./App.css";
-
-function ChatPlaceholder() {
-  return (
-    <div style={{ padding: "40px 16px", maxWidth: "670px", margin: "0 auto" }}>
-      <h2>Chat Component Placeholder</h2>
-    </div>
-  );
-}
 
 export default function App() {
   return (
@@ -19,7 +12,14 @@ export default function App() {
         <Route path="/" element={<Intro />} />
         <Route element={<AppLayout />}>
           <Route path="/knowledge" element={<KnowledgeBase />} />
-          <Route path="/chat" element={<ChatPlaceholder />} />
+          <Route 
+            path="/chat" 
+            element={
+              <div style={{ display: "flex", width: "100%", justifyContent: "center", alignItems: "center", padding: "40px 16px" }}>
+                <ChatBox />
+              </div>
+            } 
+          />
         </Route>
       </Routes>
     </div>
