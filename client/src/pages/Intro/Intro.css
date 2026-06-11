@@ -17,6 +17,18 @@
   font-weight: 700;
   color: #1C1C1C;
   margin: 0 0 40px 0;
+  position: relative;
+  padding-right: 54px;
+}
+
+.intro__title-decoration {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 43px;
+  object-fit: contain;
 }
 
 .intro__grid {
@@ -69,11 +81,15 @@
   font-size: 18px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .intro__start-btn:hover {
-  background-color: #2D2A32;
+  background-color: #3B117A;
+}
+
+.intro__start-btn:active {
+  transform: scale(0.98);
 }
 
 @media (max-width: 768px) {
@@ -86,14 +102,28 @@
   .intro__title {
     font-size: 48px;
     margin-bottom: 32px;
-    width: 100%;
+    width: auto;
+    max-width: 354px;
+    text-align: center;
+    display: inline-block;
+    padding-right: 0;
+  }
+
+  .intro__title-decoration {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 12px;
+    top: -4px;
+    transform: none;
+    right: auto;
   }
 
   .intro__grid {
     flex-direction: column; 
     gap: 12px; 
     width: 100%;
-    max-width: 362px; /* Matches the 362px width bounding box */
+    max-width: 362px;
     margin-bottom: 32px;
     align-items: center;
   }
@@ -117,7 +147,6 @@
     object-fit: contain;
   }
 
-  /* 3. Style the card text alignment */
   .intro__card-text {
     text-align: left;
     font-size: 16px;
