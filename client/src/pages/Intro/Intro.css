@@ -75,3 +75,52 @@
 .intro__start-btn:hover {
   background-color: #2D2A32;
 }
+
+@media (max-width: 768px) {
+  .intro {
+    align-items: center; 
+    text-align: center;
+    padding: 32px 16px;
+  }
+
+  .intro__title {
+    font-size: 48px;
+    margin-bottom: 32px;
+    width: 100%;
+  }
+
+  .intro__grid {
+    flex-direction: column; 
+    gap: 12px; 
+    width: 100%;
+    max-width: 362px; /* Matches the 362px width bounding box */
+    margin-bottom: 32px;
+    align-items: center;
+  }
+
+  .intro__card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #F6F3FF;
+    width: 362px;
+    height: 142px;
+    padding: 16px;
+    gap: 12px;
+    box-sizing: border-box;
+  }
+
+  .intro__card-icon {
+    width: auto;
+    height: 80px;
+    margin-bottom: 0;
+    object-fit: contain;
+  }
+
+  /* 3. Style the card text alignment */
+  .intro__card-text {
+    text-align: left;
+    font-size: 16px;
+    line-height: 130%;
+  }
+}
