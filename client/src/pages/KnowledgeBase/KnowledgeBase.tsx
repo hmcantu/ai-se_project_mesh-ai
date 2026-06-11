@@ -10,25 +10,21 @@ export default function KnowledgeBase() {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchDocuments = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getDocuments();
-        if (response.success && response.data) {
-          setDocuments(response.data);
-        } else {
-          setError(response.error?.message || "Failed to load documents.");
-        }
-      } catch (err) {
-        setError("An unexpected error occurred while fetching data.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+useEffect(() => {
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const res = await getDocuments();
+      setDocuments(res.data || []);
+    } catch (err) {
+      setError("Failed to load documents.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchDocuments();
-  }, []);
+  fetchData();
+}, []);
 
   const handleFileSelect = (file: File) => {
     const newDoc: KnowledgeDoc = {
