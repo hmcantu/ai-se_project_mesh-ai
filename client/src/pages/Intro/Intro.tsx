@@ -43,13 +43,15 @@ export default function Intro() {
         </div>
       </div>
 
-      <p className="intro__prompt">
-        Start by creating your Organization’s Knowledge Base
-      </p>
-
-      <button className="intro__start-btn" onClick={() => navigate("/knowledge")}>
-        Start
-      </button>
+      {/* Structured matching the layout parent folder container */}
+      <div className="intro__action-container">
+        <p className="intro__prompt">
+          Start by creating your Organization’s Knowledge Base
+        </p>
+        <button className="intro__start-btn" onClick={() => navigate("/knowledge")}>
+          Start
+        </button>
+      </div>
     </div>
   );
 }
