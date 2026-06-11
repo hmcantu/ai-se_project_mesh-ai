@@ -1,35 +1,66 @@
-.knowledge-base {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 40px 24px;
+.knowledge-base__status {
+  padding: 16px;
+  color: #888;
+  font-size: 14px;
 }
 
-.knowledge-base__title {
-  font-family: "Space Grotesk", Arial, sans-serif;
-  font-weight: 700;
-  font-size: 32px;
-  margin-bottom: 32px;
-  color: #1a1a1a;
+.knowledge-base__status--error {
+  color: #ff4d4d;
 }
 
-.knowledge-base__label {
-  font-size: 16px;
+.knowledge-base__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.knowledge-base__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 20px;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+
+.knowledge-base__item:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.knowledge-base__item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.knowledge-base__item-title {
   font-weight: 500;
-  margin-bottom: 8px;
-  color: #444;
-}
-
-.knowledge-base__save-btn {
-  background-color: #000;
   color: #fff;
-  padding: 12px 28px;
-  border-radius: 6px;
-  font-weight: 600;
   font-size: 15px;
-  margin-top: 24px;
-  transition: opacity 0.2s;
 }
 
-.knowledge-base__save-btn:hover {
-  opacity: 0.85;
+.knowledge-base__item-meta {
+  font-size: 12px;
+  color: #666;
+}
+
+.knowledge-base__item-date {
+  font-size: 13px;
+  color: #888;
+}
+
+.knowledge-base__empty {
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.knowledge-base__save-btn:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
