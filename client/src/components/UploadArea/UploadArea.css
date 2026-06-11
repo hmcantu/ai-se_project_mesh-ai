@@ -1,16 +1,16 @@
 .upload-area {
-  border: 2px dashed #ccc;
-  border-radius: 8px;
-  padding: 40px;
+  border: 1px dashed transparent;
+  border-radius: 16px;
+  padding: 48px 40px;
   text-align: center;
-  background-color: #fafafa;
-  transition: border-color 0.2s, background-color 0.2s;
-  margin-bottom: 24px;
+  background-color: #F1F0FA;
+  transition: background-color 0.2s, border-color 0.2s;
+  cursor: pointer;
 }
 
 .upload-area--active {
-  border-color: #4a90e2;
-  background-color: #edf5ff;
+  background-color: #E6E4F5;
+  border-color: #AA3BFF;
 }
 
 .upload-area__input {
@@ -18,12 +18,24 @@
 }
 
 .upload-area__label {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   width: 100%;
   height: 100%;
+  cursor: pointer;
 }
 
 .upload-area__text {
-  color: #666;
+  color: #71717A;
   font-size: 16px;
+  font-family: sans-serif;
+}
+
+.upload-area__text span {
+  color: #71717A;
+  text-decoration: underline;
+  font-weight: 500;
 }

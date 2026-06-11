@@ -39,13 +39,17 @@ export default function KnowledgeBase() {
       createdAt: new Date().toISOString(),
     };
 
-    setDocuments((prevDocs) => [newDoc, ...prevDocs]);
+    setDocuments((prevDocs) => [...prevDocs, newDoc]);
+  };
+
+  // Handler to clear a document chip when clicking the X button
+  const handleDeleteDoc = (idToRemove: string) => {
+    setDocuments((prevDocs) => prevDocs.filter((doc) => doc._id !== idToRemove));
   };
 
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      // Simulate an asynchronous API database submission network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
       alert(`Success! Saved ${documents.length} knowledge base records.`);
     } catch (err) {
@@ -68,22 +72,20 @@ export default function KnowledgeBase() {
         {error && <div className="knowledge-base__status knowledge-base__status--error">{error}</div>}
         
         {!isLoading && !error && (
-          <div className="knowledge-base__list">
-            {documents.length === 0 ? (
-              <p className="knowledge-base__empty">No documents found. Upload one to get started.</p>
-            ) : (
-              documents.map((doc) => (
-                <div key={doc._id} className="knowledge-base__item">
-                  <div className="knowledge-base__item-info">
-                    <span className="knowledge-base__item-title">{doc.title}</span>
-                    <span className="knowledge-base__item-meta">{doc.fileName}</span>
-                  </div>
-                  <span className="knowledge-base__item-date">
-                    {new Date(doc.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-              ))
-            )}
+          <div className="knowledge-base__chips-container">
+            {documents.map((doc) => (
+              <div key={doc._id} className="knowledge-base__chip">
+                <span className="knowledge-base__chip-title">{doc.title}</span>
+                <button 
+                  type="button" 
+                  className="knowledge-base__chip-delete"
+                  onClick={() => handleDeleteDoc(doc._id)}
+                  aria-label={`Remove ${doc.title}`}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
           </div>
         )}
         

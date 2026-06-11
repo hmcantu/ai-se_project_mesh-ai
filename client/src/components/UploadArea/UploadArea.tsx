@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./UploadArea.css";
+import logoIcon from "../../assets/logo.png";
 
 type Props = {
   onFileSelect: (file: File) => void;
@@ -40,7 +41,7 @@ export default function UploadArea({ onFileSelect }: Props) {
     }
   };
 
-  return (
+ return (
     <div 
       className={`upload-area ${isDragActive ? "upload-area--active" : ""}`}
       onDragEnter={handleDrag}
@@ -48,16 +49,18 @@ export default function UploadArea({ onFileSelect }: Props) {
       onDragLeave={handleDrag}
       onDrop={handleDrop}
     >
-      <input
-        type="file"
-        id="file-upload"
-        className="upload-area__input"
-        accept=".pdf"
-        onChange={handleChange}
-      />
-      <label htmlFor="file-upload" className="upload-area__label">
-        <span className="upload-area__text">Drag & drop your PDF here or click to browse</span>
+      <label className="upload-area__label">
+        <input
+          type="file"
+          id="file-upload"
+          className="upload-area__input"
+          accept=".pdf"
+          onChange={handleChange}
+        />
+        <img src={logoIcon} alt="Mesh AI Logo" className="upload-area__icon" />
+        <p className="upload-area__text">
+          Drag'n'Drop or <span>Upload</span>
+        </p>
       </label>
     </div>
-  );
-}
+  );}
