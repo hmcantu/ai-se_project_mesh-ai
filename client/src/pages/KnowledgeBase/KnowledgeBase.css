@@ -1,0 +1,35 @@
+.knowledge-base {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.knowledge-base__title {
+  font-family: "Space Grotesk", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  margin-bottom: 32px;
+  color: #1a1a1a;
+}
+
+.knowledge-base__label {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.knowledge-base__save-btn {
+  background-color: #000;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 15px;
+  margin-top: 24px;
+  transition: opacity 0.2s;
+}
+
+.knowledge-base__save-btn:hover {
+  opacity: 0.85;
+}
