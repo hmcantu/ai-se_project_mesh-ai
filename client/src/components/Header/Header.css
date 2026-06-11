@@ -1,0 +1,38 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E4E4E7;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header__logo {
+  height: 24px;
+  object-fit: contain;
+}
+
+.header__nav {
+  display: flex;
+  gap: 20px;
+}
+
+.header__link {
+  font-family: "Space Grotesk", Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #71717A;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.header__link:hover {
+  color: #1C1C1C;
+}
+
+.header__link--active {
+  color: #1C1C1C;
+  font-weight: 700;
+}
