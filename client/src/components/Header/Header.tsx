@@ -1,17 +1,25 @@
 import { NavLink } from "react-router-dom";
-import logoIcon from "../../assets/logo.png"; // Using the high-res PNG we saved earlier
 import "./Header.css";
+import logoImg from "../../assets/logo.png";
+import menuIcon from "../../assets/header-menu-button.png";
 
 export default function Header() {
   function getNavLinkClass({ isActive }: { isActive: boolean }) {
-    return `header__link ${isActive ? "header__link--active" : ""}`;
+    return isActive ? "header__link header__link--active" : "header__link";
   }
 
   return (
     <header className="header">
-      <div className="header__logo-container">
-        <img src={logoIcon} alt="Mesh AI Logo" className="header__logo" />
+      <div className="header__brand-container">
+        <button className="header__menu-btn" aria-label="Open navigation menu">
+          <img src={menuIcon} alt="" className="header__menu-icon" />
+        </button>
+        
+        <NavLink to="/" className="header__logo-link">
+          <img src={logoImg} alt="Mesh AI" className="header__logo" />
+        </NavLink>
       </div>
+
       <nav className="header__nav">
         <NavLink to="/knowledge" className={getNavLinkClass}>
           Knowledge Base

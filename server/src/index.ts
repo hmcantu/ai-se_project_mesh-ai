@@ -30,8 +30,8 @@ mongoose.connect(process.env.MONGO_URI!)
     console.info('MongoDB connected successfully! 🎉');
   })
   .catch((err) => {
-    console.warn('MongoDB connection failed, starting server in offline mode... 🔌');
-  });
+  console.error("Database connection failed:", err);
+});
 
 app.listen(port, () => {
   console.info(`Server running on port ${port}`);
