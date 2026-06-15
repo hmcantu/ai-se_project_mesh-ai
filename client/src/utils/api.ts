@@ -97,6 +97,7 @@ export const createChat = async (title: string): Promise<ApiResponse<Chat>> => {
   };
 };
 
+// Mock function to fetch messages for an active chat
 export const getChat = async (chatId: string): Promise<ApiResponse<{ _id: string; messages: Message[] }>> => {
   await delay(600);
   
@@ -120,6 +121,22 @@ export const getChat = async (chatId: string): Promise<ApiResponse<{ _id: string
     data: {
       _id: chatId,
       messages: mockMessages[chatId] || []
+    },
+    error: null
+  };
+};
+
+// Mock function to send a user message and get a simulated assistant response
+export const sendMessage = async (chatId: string, content: string): Promise<ApiResponse<Message>> => {
+  await delay(1500); // 1.5 second response delay requested by the lesson
+  return {
+    success: true,
+    data: {
+      _id: `mock-msg-${Math.random().toString(36).substring(4)}`,
+      chatId,
+      role: 'assistant',
+      content: `This is a mock response to your question: "${content}". This area natively processes **markdown bold text**, lists, and code blocks seamlessly!`,
+      createdAt: new Date().toISOString()
     },
     error: null
   };

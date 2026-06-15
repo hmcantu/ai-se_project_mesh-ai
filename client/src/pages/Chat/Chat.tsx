@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { getChats, createChat, getChat, type Chat as ChatType, type Message } from "../../utils/api";
+import { getChats, createChat, getChat, sendMessage, type Chat as ChatType, type Message } from "../../utils/api";
 import "./Chat.css";
 import plusIcon from "../../assets/plus.png";
 import errorIcon from "../../assets/error.png";
 
 export default function Chat() {
-  // Sidebar State Blocks
   const [chats, setChats] = useState<ChatType[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [chatsError, setChatsError] = useState<string | null>(null);
@@ -16,6 +15,9 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoadingMessages, setIsLoadingMessages] = useState<boolean>(false);
   const [messagesError, setMessagesError] = useState<string>("");
+
+  const [input, setInput] = useState<string>("");
+  const [isSending, setIsSending] = useState<boolean>(false);
 
   // Load sidebar chats on mount
   useEffect(() => {
@@ -32,6 +34,7 @@ export default function Chat() {
     loadSidebar();
   }, []);
 
+  // Fetch messages when a chat is selected
   useEffect(() => {
     if (!activeChatId) return;
 
@@ -51,6 +54,48 @@ export default function Chat() {
 
     loadMessages();
   }, [activeChatId]);
+
+  const handleSend = async () => {
+    const text = input.trim();
+    if (!text || !activeChatId || isSending) return;
+
+    const userMessage: Message = {
+      _id: Date.now().toString(),
+      chatId: activeChatId,
+      role: "user",
+      content: text,
+      createdAt: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setIsSending(true);
+
+    try {
+      const res = await sendMessage(activeChatId, text);
+      if (res.data) {
+        setMessages((prev) => [...prev, res.data!]);
+      }
+    } catch {
+      const errorMessage: Message = {
+        _id: Date.now().toString(),
+        chatId: activeChatId,
+        role: "assistant",
+        content: "Something went wrong. Please try again.",
+        createdAt: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
 
   const handleCreateChat = async () => {
     const title = newChatTitle.trim() || "New Chat";
@@ -111,24 +156,17 @@ export default function Chat() {
           ))}
         </ul>
       </aside>
+
       <div className="chat__main">
-        
         {/* State A: No Selected Active Conversation Thread */}
         {!messagesError && !isLoadingMessages && !activeChatId && (
-          <div className="chat__no-messages">
+          <div className="chat__no-chats-frame">
             <h2 className="chat__prompt-text">
               Create a new chat or select an existing chat to start the conversation
             </h2>
             <button className="chat__prompt-btn" type="button" onClick={() => setIsCreatingChat(true)}>
               Start New Chat
             </button>
-          </div>
-        )}
-
-        {/* State B: Chat Selected, but contains No Historical Messages */}
-        {!messagesError && !isLoadingMessages && activeChatId && messages.length === 0 && (
-          <div className="chat__no-messages">
-            <h2 className="chat__prompt-text">Ask a question below to start the conversation</h2>
           </div>
         )}
 
@@ -143,42 +181,68 @@ export default function Chat() {
             <div className="chat__error-icon-box">
               <img src={errorIcon} alt="Error" className="chat__error-icon" />
             </div>
-            
             <div className="chat__error-text-block">
               <h2 className="chat__error-title">Looks like something went wrong</h2>
               <p className="chat__error-message">Try reloading the page or creating the chat again</p>
             </div>
-
-            <button 
-              className="chat__error-button" 
-              type="button"
-              onClick={() => window.location.reload()}
-            >
+            <button className="chat__error-button" type="button" onClick={() => window.location.reload()}>
               Go to the Main Page
             </button>
           </div>
         )}
 
-        {/* State E: Main Render Engine with Active Message Arrays */}
-        {activeChatId && !isLoadingMessages && !messagesError && messages.length > 0 && (
-          <ul className="chat__messages">
-            {messages.map((msg) => (
-              <li
-                key={msg._id}
-                className={
-                  msg.role === "user"
-                    ? "chat__message chat__message_user"
-                    : "chat__message chat__message_assistant"
-                }
+        {/* Step 1: Combined Active Workspace Block (Handles State B & State E together) */}
+        {activeChatId && !isLoadingMessages && !messagesError && (
+          <div className={`chat__workspace-container ${messages.length === 0 ? "chat__workspace-container_empty" : ""}`}>
+            
+            {messages.length === 0 ? (
+              <div className="chat__no-messages">
+                <h2 className="chat__prompt-text">Ask a question below to start the conversation</h2>
+              </div>
+            ) : (
+              <ul className="chat__messages">
+                {messages.map((msg) => (
+                  <li
+                    key={msg._id}
+                    className={
+                      msg.role === "user"
+                        ? "chat__message chat__message_user"
+                        : "chat__message chat__message_assistant"
+                    }
+                  >
+                    {msg.role === "user" ? (
+                      msg.content
+                    ) : (
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Step 1 & Step 2: Controlled Input Bar Interface */}
+            <div className="chat__input-bar">
+              <textarea
+                className="chat__input"
+                placeholder="Ask any question"
+                rows={1}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                disabled={isSending}
+              />
+              <button
+                className="chat__send"
+                aria-label="Send message"
+                onClick={handleSend}
+                disabled={isSending || !input.trim()}
               >
-                {msg.role === "user" ? (
-                  msg.content
-                ) : (
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
-                )}
-              </li>
-            ))}
-          </ul>
+                <svg className="chat__send-vector" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>
