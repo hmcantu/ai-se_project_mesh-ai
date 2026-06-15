@@ -96,3 +96,31 @@ export const createChat = async (title: string): Promise<ApiResponse<Chat>> => {
     error: null,
   };
 };
+
+export const getChat = async (chatId: string): Promise<ApiResponse<{ _id: string; messages: Message[] }>> => {
+  await delay(600);
+  
+  const mockMessages: Record<string, Message[]> = {
+    c1: [
+      { _id: "m1", chatId: "c1", role: "user", content: "What is PostHog?", createdAt: new Date().toISOString() },
+      { _id: "m2", chatId: "c1", role: "assistant", content: "PostHog is an **open-source product analytics platform** designed for modern engineering squads.\n\n### Core Capabilities:\n* **Product Analytics**: Funnels, paths, and retention tracking.\n* **Session Replays**: Record user journeys directly.\n* **Feature Flags**: Roll out code safely.", createdAt: new Date().toISOString() }
+    ],
+    c2: [
+      { _id: "m3", chatId: "c2", role: "user", content: "Who are our target users?", createdAt: new Date().toISOString() },
+      { _id: "m4", chatId: "c2", role: "assistant", content: "Based on engineering logs, our core users split into three buckets:\n1. **Product Engineers**: Need high-fidelity usage funnels.\n2. **Growth Teams**: Focus heavily on multi-variant split tests.\n3. **Data Teams**: Want direct SQL access via raw events pipelines.", createdAt: new Date().toISOString() }
+    ],
+    c3: [
+      { _id: "m5", chatId: "c3", role: "user", content: "Give me a quick marketing hypothesis framework.", createdAt: new Date().toISOString() },
+      { _id: "m6", chatId: "c3", role: "assistant", content: "Here is your baseline framework structure:\n\n`If we [change/feature], then [measurable metric] will increase because [user psychological motivation].`", createdAt: new Date().toISOString() }
+    ]
+  };
+
+  return {
+    success: true,
+    data: {
+      _id: chatId,
+      messages: mockMessages[chatId] || []
+    },
+    error: null
+  };
+};
