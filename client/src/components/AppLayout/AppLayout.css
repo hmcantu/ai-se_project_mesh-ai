@@ -10,3 +10,19 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+.app-layout__backdrop {
+  display: none;
+}
+
+@media (max-width: 1200px) {
+  .app-layout__backdrop {
+    display: block;
+    position: fixed;
+    top: 60.67px;
+    inset-inline: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 99;
+  }
+}

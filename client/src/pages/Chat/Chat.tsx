@@ -1,11 +1,19 @@
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import { useOutletContext } from "react-router-dom";
 import { getChats, createChat, getChat, sendMessage, type Chat as ChatType, type Message } from "../../utils/api";
 import "./Chat.css";
 import plusIcon from "../../assets/plus.png";
 import errorIcon from "../../assets/error.png";
 
+type MobileContext = {
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
+};
+
 export default function Chat() {
+  const { isMobileMenuOpen, setIsMobileMenuOpen } = useOutletContext<MobileContext>();
+
   const [chats, setChats] = useState<ChatType[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [chatsError, setChatsError] = useState<string | null>(null);
@@ -19,7 +27,6 @@ export default function Chat() {
   const [input, setInput] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
 
-  // Load sidebar chats on mount
   useEffect(() => {
     const loadSidebar = async () => {
       try {
@@ -34,7 +41,6 @@ export default function Chat() {
     loadSidebar();
   }, []);
 
-  // Fetch messages when a chat is selected
   useEffect(() => {
     if (!activeChatId) return;
 
@@ -107,6 +113,7 @@ export default function Chat() {
       if (res.data) {
         setChats((prev) => [res.data!, ...prev]);
         setActiveChatId(res.data._id);
+        setIsMobileMenuOpen(false);
       }
     } catch {
       setChatsError("Failed to create chat.");
@@ -115,7 +122,7 @@ export default function Chat() {
 
   return (
     <div className="chat">
-      <aside className="chat__sidebar">
+      <aside className={`chat__sidebar ${isMobileMenuOpen ? "chat__sidebar_open" : ""}`}>
         <button className="chat__new-btn" type="button" onClick={() => setIsCreatingChat(true)}>
           <div className="chat__new-btn-content">
             <img src={plusIcon} alt="" className="chat__plus-icon" />
@@ -149,7 +156,10 @@ export default function Chat() {
             <li
               key={c._id}
               className={c._id === activeChatId ? "chat__item chat__item_active" : "chat__item"}
-              onClick={() => setActiveChatId(c._id)}
+              onClick={() => {
+                setActiveChatId(c._id);
+                setIsMobileMenuOpen(false);
+              }}
             >
               {c.title}
             </li>
@@ -158,24 +168,28 @@ export default function Chat() {
       </aside>
 
       <div className="chat__main">
-        {/* State A: No Selected Active Conversation Thread */}
         {!messagesError && !isLoadingMessages && !activeChatId && (
           <div className="chat__no-chats-frame">
             <h2 className="chat__prompt-text">
               Create a new chat or select an existing chat to start the conversation
             </h2>
-            <button className="chat__prompt-btn" type="button" onClick={() => setIsCreatingChat(true)}>
+            <button
+              className="chat__prompt-btn"
+              type="button"
+              onClick={() => {
+                setIsCreatingChat(true);
+                setIsMobileMenuOpen(true);
+              }}
+            >
               Start New Chat
             </button>
           </div>
         )}
 
-        {/* State C: Loading Active Thread Data Payload */}
         {activeChatId && isLoadingMessages && (
           <p className="chat__sidebar-message chat__message-loading">Loading messages…</p>
         )}
 
-        {/* State D: Catch-all Fallback Chat Loading Error Boundary */}
         {activeChatId && messagesError && (
           <div className="chat__error-container">
             <div className="chat__error-icon-box">
@@ -191,7 +205,6 @@ export default function Chat() {
           </div>
         )}
 
-        {/* Step 1: Combined Active Workspace Block (Handles State B & State E together) */}
         {activeChatId && !isLoadingMessages && !messagesError && (
           <div className={`chat__workspace-container ${messages.length === 0 ? "chat__workspace-container_empty" : ""}`}>
             
@@ -220,27 +233,28 @@ export default function Chat() {
               </ul>
             )}
 
-            {/* Step 1 & Step 2: Controlled Input Bar Interface */}
-            <div className="chat__input-bar">
-              <textarea
-                className="chat__input"
-                placeholder="Ask any question"
-                rows={1}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={isSending}
-              />
-              <button
-                className="chat__send"
-                aria-label="Send message"
-                onClick={handleSend}
-                disabled={isSending || !input.trim()}
-              >
-                <svg className="chat__send-vector" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
+            <div className="chat__footer">
+              <div className="chat__input-bar">
+                <textarea
+                  className="chat__input"
+                  placeholder="Ask any question"
+                  rows={1}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={isSending}
+                />
+                <button
+                  className="chat__send"
+                  aria-label="Send message"
+                  onClick={handleSend}
+                  disabled={isSending || !input.trim()}
+                >
+                  <svg className="chat__send-vector" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         )}
