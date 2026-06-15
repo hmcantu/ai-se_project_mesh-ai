@@ -6,6 +6,7 @@ export default function KnowledgeBase() {
   const [documents, setDocuments] = useState<string[]>([
     "code_of_conduct.pdf",
     "Privacy_Policy.pdf",
+    "anontherdocument.pdf",
     "anontherdocument.pdf"
   ]);
 
@@ -23,7 +24,10 @@ export default function KnowledgeBase() {
 
         <div className="knowledge-base__upload-container">
           <img src={uploadIcon} alt="" className="knowledge-base__upload-icon" />
-          <button type="button" className="knowledge-base__upload-btn">Upload</button>
+          <div className="knowledge-base__upload-text-box">
+            <span className="knowledge-base__upload-text-desktop">Drag'n'Drop or </span>
+            <button type="button" className="knowledge-base__upload-btn">Upload</button>
+          </div>
         </div>
 
         {documents.length > 0 && (
