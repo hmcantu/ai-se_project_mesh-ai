@@ -1,155 +1,169 @@
 .knowledge-base {
-  max-width: 670px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 34px 16px 40px 16px;
+  background-color: #FFFFFF;
+  box-sizing: border-box;
+  padding: 40px;
+}
+
+.knowledge-base__main-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 670px;
+  gap: 32px;
+}
+
+.knowledge-base__header-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .knowledge-base__title {
   font-family: "Space Grotesk", Arial, sans-serif;
-  font-weight: 700;
   font-size: 32px;
-  margin-bottom: 24px;
+  font-weight: 700;
   color: #1C1C1C;
+  line-height: 100%;
+  margin: 0;
 }
 
-.knowledge-base__content {
+.knowledge-base__subtitle {
+  font-family: "Work Sans", Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #1C1C1C;
+  line-height: 100%;
+  margin: 0;
+}
+
+/* 🎯 MATCHING FIGMA SPECIFICATIONS (Screenshot 2026-06-15 at 3.45.11 PM.png) */
+.knowledge-base__upload-container {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 145px;
+  background-color: #F6F3FF;
+  border-radius: 16px;
+  box-sizing: border-box;
+  gap: 12px; /* 👈 Set explicitly to 12px matching your layout gap panel tool token */
 }
 
-.knowledge-base__label {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: -16px;
+.knowledge-base__upload-icon {
+  width: 20px;
+  height: 18px;
+  object-fit: contain;
+}
+
+/* 🎯 MATCHING TYPOGRAPHY UNDERLINE SPECS (Screenshot 2026-06-15 at 3.45.49 PM.png) */
+.knowledge-base__upload-btn {
+  background: transparent;
+  border: none;
+  font-family: "Work Sans", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
   color: #1C1C1C;
+  text-decoration: underline; /* 👈 Forces solid text line rule */
+  cursor: pointer;
+  padding: 0;
+  line-height: 120%;
 }
 
-.knowledge-base__chips-container {
+.knowledge-base__document-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
   width: 100%;
 }
 
-.knowledge-base__chip {
-  display: inline-flex;
+.knowledge-base__document-item {
+  display: flex;
   align-items: center;
-  gap: 12px;
-  background-color: #F4F4F5;
-  border: 1px solid #E4E4E7;
-  padding: 10px 16px;
+  justify-content: space-between;
+  width: 100%;
+  height: 48px;
+  padding: 12px 16px;
+  background-color: #FAFAFA;
+  border: 1px solid rgba(28, 28, 28, 0.08);
   border-radius: 8px;
-  transition: background-color 0.2s, border-color 0.2s;
+  box-sizing: border-box;
 }
 
-.knowledge-base__chip:hover {
-  background-color: #EBEBEF;
-  border-color: #D4D4D8;
-}
-
-.knowledge-base__chip-title {
-  font-size: 15px;
+.knowledge-base__document-name {
+  font-family: "Work Sans", Arial, sans-serif;
+  font-size: 14px;
   color: #1C1C1C;
-  font-family: sans-serif;
 }
 
-.knowledge-base__chip-delete {
-  background: none;
+.knowledge-base__document-remove {
+  background: transparent;
   border: none;
   color: #1C1C1C;
+  opacity: 0.4;
   font-size: 14px;
   cursor: pointer;
-  padding: 2px;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.6;
-  transition: opacity 0.2s;
+  transition: opacity 0.15s ease;
 }
 
-.knowledge-base__chip-delete:hover {
+.knowledge-base__document-remove:hover {
   opacity: 1;
 }
 
-.knowledge-base__status {
-  color: #71717A;
-  font-size: 14px;
-}
-
-.knowledge-base__status--error {
-  color: #EF4444;
-}
-
-.knowledge-base__save-btn {
-  align-self: flex-start;
+.knowledge-base__save-button {
+  width: 100%;
+  height: 44px;
+  padding: 10px 16px;
   background-color: #1C1C1C;
   color: #FFFFFF;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 16px;
+  font-family: "Work Sans", Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease;
 }
 
-.knowledge-base__save-btn:hover {
-  background-color: #2D2A32;
+.knowledge-base__save-button:hover {
+  background-color: #333333;
 }
 
-.knowledge-base__save-btn:disabled {
-  background-color: #A1A1AA;
-  cursor: not-allowed;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .knowledge-base {
-    max-width: 354px;
-    padding: 24px 16px;
+    padding: 32px 20px;
+  }
+
+  .knowledge-base__main-content {
+    max-width: 100%;
+    gap: 32px;
   }
 
   .knowledge-base__title {
     font-size: 32px;
-    line-height: 110%;
-    margin-bottom: 24px;
   }
 
-  .knowledge-base__content {
-    gap: 24px;
+  .knowledge-base__subtitle {
+    font-size: 18px;
   }
 
-  .knowledge-base__chips-container {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .knowledge-base__chip {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .knowledge-base__save-btn {
-    align-self: stretch;
-    text-align: center;
-    height: 52px;
-    padding: 10px 16px;
-    box-sizing: border-box;
-  }
-}
-
-@media (max-width: 768px) {
-  .upload-area {
-    padding: 32px 24px;
-  }
-
-  .upload-area__label {
-    gap: 8px;
-  }
-
-  .upload-area__text {
-    font-size: 14px;
+  .knowledge-base__upload-container {
+    height: 145px;
   }
 }

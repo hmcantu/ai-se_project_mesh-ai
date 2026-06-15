@@ -1,99 +1,53 @@
-import { useState, useEffect } from "react";
-import UploadArea from "../../components/UploadArea/UploadArea";
-import { getDocuments } from "../../utils/api";
-import type { KnowledgeDoc } from "../../utils/api";
+import { useState } from "react";
 import "./KnowledgeBase.css";
+import uploadIcon from "../../assets/upload.png";
 
 export default function KnowledgeBase() {
-  const [documents, setDocuments] = useState<KnowledgeDoc[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [documents, setDocuments] = useState<string[]>([
+    "code_of_conduct.pdf",
+    "Privacy_Policy.pdf",
+    "anontherdocument.pdf"
+  ]);
 
-useEffect(() => {
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const res = await getDocuments();
-      setDocuments(res.data || []);
-    } catch (err) {
-      setError("Failed to load documents.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  fetchData();
-}, []);
-
-  const handleFileSelect = (file: File) => {
-    const newDoc: KnowledgeDoc = {
-      _id: Date.now().toString(),
-      title: file.name,
-      fileName: file.name,
-      userId: "local",
-      createdAt: new Date().toISOString(),
-    };
-
-    setDocuments((prevDocs) => [...prevDocs, newDoc]);
-  };
-
-  // Handler to clear a document chip when clicking the X button
-  const handleDeleteDoc = (idToRemove: string) => {
-    setDocuments((prevDocs) => prevDocs.filter((doc) => doc._id !== idToRemove));
-  };
-
-  const handleSave = async () => {
-    try {
-      setIsSaving(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      alert(`Success! Saved ${documents.length} knowledge base records.`);
-    } catch (err) {
-      alert("Failed to save changes.");
-    } finally {
-      setIsSaving(false);
-    }
+  const handleRemoveDocument = (docName: string) => {
+    setDocuments((prev) => prev.filter((d) => d !== docName));
   };
 
   return (
     <div className="knowledge-base">
-      <h1 className="knowledge-base__title">Manage Your Knowledge Base</h1>
-      
-      <section className="knowledge-base__content">
-        <p className="knowledge-base__label">Upload documents (PDF)</p>
-        
-        <UploadArea onFileSelect={handleFileSelect} />
-        
-        {isLoading && <div className="knowledge-base__status">Loading documents...</div>}
-        {error && <div className="knowledge-base__status knowledge-base__status--error">{error}</div>}
-        
-        {!isLoading && !error && (
-          <div className="knowledge-base__chips-container">
-            {documents.map((doc) => (
-              <div key={doc._id} className="knowledge-base__chip">
-                <span className="knowledge-base__chip-title">{doc.title}</span>
-                <button 
-                  type="button" 
-                  className="knowledge-base__chip-delete"
-                  onClick={() => handleDeleteDoc(doc._id)}
-                  aria-label={`Remove ${doc.title}`}
+      <div className="knowledge-base__main-content">
+        <div className="knowledge-base__header-block">
+          <h1 className="knowledge-base__title">Manage Your Knowledge Base</h1>
+          <p className="knowledge-base__subtitle">Upload documents (PDF)</p>
+        </div>
+
+        <div className="knowledge-base__upload-container">
+          <img src={uploadIcon} alt="" className="knowledge-base__upload-icon" />
+          <button type="button" className="knowledge-base__upload-btn">Upload</button>
+        </div>
+
+        {documents.length > 0 && (
+          <ul className="knowledge-base__document-list">
+            {documents.map((doc, idx) => (
+              <li key={idx} className="knowledge-base__document-item">
+                <span className="knowledge-base__document-name">{doc}</span>
+                <button
+                  type="button"
+                  className="knowledge-base__document-remove"
+                  aria-label={`Remove ${doc}`}
+                  onClick={() => handleRemoveDocument(doc)}
                 >
                   ✕
                 </button>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
-        
-        <button 
-          className="knowledge-base__save-btn" 
-          type="button"
-          onClick={handleSave}
-          disabled={isSaving || isLoading}
-        >
-          {isSaving ? "Saving..." : "Save"}
+
+        <button type="button" className="knowledge-base__save-button">
+          Save
         </button>
-      </section>
+      </div>
     </div>
   );
 }
