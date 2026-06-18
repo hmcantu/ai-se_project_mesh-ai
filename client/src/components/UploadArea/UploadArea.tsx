@@ -2,11 +2,7 @@ import React, { useState } from "react";
 import "./UploadArea.css";
 import logoIcon from "../../assets/logo.png";
 
-type Props = {
-  onFileSelect: (file: File) => void;
-};
-
-export default function UploadArea({ onFileSelect }: Props) {
+export default function UploadArea({ onFileSelect }: { onFileSelect: (file: File) => void }) {
   const [isDragActive, setIsDragActive] = useState(false);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -41,7 +37,7 @@ export default function UploadArea({ onFileSelect }: Props) {
     }
   };
 
- return (
+  return (
     <div 
       className={`upload-area ${isDragActive ? "upload-area--active" : ""}`}
       onDragEnter={handleDrag}
@@ -63,4 +59,5 @@ export default function UploadArea({ onFileSelect }: Props) {
         </p>
       </label>
     </div>
-  );}
+  );
+}
