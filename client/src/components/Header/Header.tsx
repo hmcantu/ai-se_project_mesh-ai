@@ -2,18 +2,18 @@ import { NavLink } from "react-router-dom";
 import "./Header.css";
 import logoImg from "../../assets/logo.png";
 import menuIcon from "../../assets/header-menu-button.png";
-
+ 
 type Props = {
   onMenuOpen: () => void;
   onMenuClose: () => void;
   isMobileMenuOpen: boolean;
 };
-
+ 
 export default function Header({ onMenuOpen, onMenuClose, isMobileMenuOpen }: Props) {
   function getNavLinkClass({ isActive }: { isActive: boolean }) {
     return isActive ? "header__link header__link--active" : "header__link";
   }
-
+ 
   return (
     <header className={isMobileMenuOpen ? "header header_mobile" : "header"}>
       <div className="header__brand-container">
@@ -21,16 +21,13 @@ export default function Header({ onMenuOpen, onMenuClose, isMobileMenuOpen }: Pr
           className="header__menu-btn" 
           type="button"
           aria-label="Open navigation menu"
-          onClick={() => {
-            console.log("🎯 HAMBURGER BUTTON CLICKED!"); // 👈 Temporary test log
-            onMenuOpen();
-          }}
+          onClick={onMenuOpen}
         >
           <img 
             src={menuIcon} 
             alt="" 
             className="header__menu-icon" 
-            style={{ pointerEvents: 'none' }} // 👈 Prevents the image element from absorbing the click
+            style={{ pointerEvents: 'none' }}
           />
         </button>
         

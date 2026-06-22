@@ -3,6 +3,15 @@ import "./KnowledgeBase.css";
 import UploadArea from "../../components/UploadArea/UploadArea";
 import { getDocuments } from "../../utils/api";
 
+interface KnowledgeDoc {
+  name?: string;
+  title?: string;
+}
+
+interface ApiResponse<T> {
+  data?: T;
+}
+
 export default function KnowledgeBase() {
   const [documents, setDocuments] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -14,13 +23,15 @@ export default function KnowledgeBase() {
     setError(null);
 
     getDocuments()
-      .then((response: any) => {
+      .then((response: ApiResponse<KnowledgeDoc[]> | unknown) => {
         if (!isMounted) return;
 
         try {
-          const targetData = response?.data || response;
+          const res = response as ApiResponse<KnowledgeDoc[]> & any;
+          const targetData = res?.data || res;
+          
           if (Array.isArray(targetData)) {
-            const docNames = targetData.map((doc: any) => {
+            const docNames = targetData.map((doc: string | KnowledgeDoc) => {
               if (typeof doc === "string") return doc;
               return doc?.name || doc?.title || "Unnamed Document";
             });
@@ -32,7 +43,7 @@ export default function KnowledgeBase() {
           setIsLoading(false);
         }
       })
-      .catch((err) => {
+      .catch((err: Error | any) => {
         if (isMounted) {
           setError(err?.message || "Failed to load documents.");
           setIsLoading(false);
@@ -48,7 +59,7 @@ export default function KnowledgeBase() {
     setDocuments((prev) => prev.filter((d) => d !== docName));
   };
 
-  const handleFileUploaded = (file: any) => {
+  const handleFileUploaded = (file: File) => {
     if (file && file.name) {
       setDocuments((prev) => [...prev, file.name]);
     }
@@ -76,8 +87,8 @@ export default function KnowledgeBase() {
           <>
             {documents.length > 0 ? (
               <ul className="knowledge-base__document-list">
-                {documents.map((doc, idx) => (
-                  <li key={idx} className="knowledge-base__document-item">
+                {documents.map((doc) => (
+                  <li key={doc} className="knowledge-base__document-item">
                     <span className="knowledge-base__document-name">{doc}</span>
                     <button
                       type="button"
