@@ -1,8 +1,14 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useFormWithValidation } from "../../hooks/useFormWithValidation";
-// Import your local bundled logo image directly!
 import logoImg from "../../assets/logo.png";
+
+// Helper function to dynamically swap styling based on the active route
+function getNavLinkClass({ isActive }: { isActive: boolean }) {
+  return isActive
+    ? "auth-tab-link auth-tab-link--active"
+    : "auth-tab-link auth-tab-link--inactive";
+}
 
 export default function Login() {
   const { values, handleChange, errors, isValid } = useFormWithValidation({
@@ -17,30 +23,27 @@ export default function Login() {
 
   return (
     <div className="auth-container">
-      {/* Absolute Header Ribbon using your imported local image handle */}
       <header className="auth-header">
         <img className="auth-header__logo" alt="MeshAI logo" src={logoImg} />
       </header>
 
-      {/* Main Container Card Wrapper */}
       <div className="auth-card">
         <div className="auth-heading-container">
           <h2 className="auth-title">Sign in</h2>
           <p className="auth-subtitle">Access your organisation's secure workspace</p>
         </div>
 
-        {/* Side-By-Side Button Nav Switcher Tabs */}
+        {/* Updated NavLink structure utilizing the active checker */}
         <div className="auth-tabs">
-          <NavLink to="/login" className="auth-tab-link auth-tab-link--active">
+          <NavLink to="/login" className={getNavLinkClass}>
             Login
           </NavLink>
-          <NavLink to="/register" className="auth-tab-link auth-tab-link--inactive">
+          <NavLink to="/register" className={getNavLinkClass}>
             Register
           </NavLink>
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
-          {/* Email Block */}
           <div className="form-group">
             <label className="form-label" htmlFor="email">
               Email
@@ -55,12 +58,9 @@ export default function Login() {
               onChange={handleChange}
               placeholder="johndoe12345@gmail.com"
             />
-            {errors.email && (
-              <span className="error-message">{errors.email}</span>
-            )}
+            {errors.email && <span className="error-message">{errors.email}</span>}
           </div>
 
-          {/* Password Block */}
           <div className="form-group">
             <label className="form-label" htmlFor="password">
               Password
@@ -76,18 +76,11 @@ export default function Login() {
               onChange={handleChange}
               placeholder="12345678"
             />
-            {errors.password && (
-              <span className="error-message">{errors.password}</span>
-            )}
+            {errors.password && <span className="error-message">{errors.password}</span>}
           </div>
 
-          {/* Submit Button Block */}
           <div className="form-submit-container">
-            <button
-              type="submit"
-              className="form-submit"
-              disabled={!isValid}
-            >
+            <button type="submit" className="form-submit" disabled={!isValid}>
               Login
             </button>
           </div>
