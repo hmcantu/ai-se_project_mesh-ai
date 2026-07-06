@@ -1,90 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Work+Sans:wght@400;500&display=swap');
+
 .auth-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #f9fafb; /* Light sleek background */
+  background-color: #f9fafb;
   padding: 20px;
 }
 
+/* Base Top Navigation Bar Layout Styles - Collision Free */
+.auth-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 30px 40px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.auth-header__logo {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+
+/* Main Content Card */
 .auth-card {
   background: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  width: 100%;
-  max-width: 400px;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.05); /* Clean desktop shadow profile */
+  width: 440px;
   box-sizing: border-box;
 }
 
-.header {
+.auth-heading-container {
+  width: 380px;
+  margin-bottom: 40px;
+}
+
+.auth-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 100%;
+  color: #1c1c1c;
+  margin: 0 0 8px 0;
+}
+
+.auth-subtitle {
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  color: #1c1c1c;
+  margin: 0;
+}
+
+/* Horizontal Tabs Switcher Block */
+.auth-tabs {
+  display: flex;
+  width: 380px;
+  gap: 12px;
   margin-bottom: 24px;
-  text-align: center;
 }
 
-.header__logo {
-  height: 40px;
-  width: auto;
+.auth-tab-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 184px;
+  height: 44px;
+  border-radius: 8px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-/* Form Layout Elements */
+/* Selected Active Switch Tab styling */
+.auth-tab-link--active {
+  background-color: rgba(158, 121, 217, 0.6); /* #9E79D9 at 60% opacity */
+  color: #000000;
+}
+
+/* Inactive Alternate Switch Tab styling */
+.auth-tab-link--inactive {
+  background-color: #ffffff;
+  border: 1px solid rgba(158, 121, 217, 0.2); /* #9E79D9 at 20% opacity */
+  color: #000000;
+}
+
+/* Fields & Groups */
 .form-group {
-  margin-bottom: 20px;
+  width: 380px;
+  margin-bottom: 24px;
 }
 
 .form-label {
   display: block;
-  margin-bottom: 6px;
-  font-weight: 500;
-  font-size: 14px;
-  color: #374151;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 100%;
+  color: #1c1c1c;
+  margin-bottom: 12px;
 }
 
 .form-input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
+  width: 380px;
+  height: 44px;
+  border: 1px solid rgba(28, 28, 28, 0.3); /* #1C1C1C at 30% opacity */
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
   box-sizing: border-box;
-  transition: border-color 0.2s;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #2563eb; /* MeshAI blue focus */
+  border-color: #9e79d9;
+}
+
+.form-input--error {
+  border-color: #ef4444 !important;
+}
+
+.error-message {
+  display: block;
+  margin-top: 6px;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 14px;
+  color: #ef4444;
+}
+
+/* Action Execution Controls */
+.form-submit-container {
+  width: 380px;
+  display: flex;
 }
 
 .form-submit {
-  width: 100%;
-  padding: 12px;
-  background-color: #2563eb;
-  color: white;
+  width: 164px;
+  height: 44px;
+  background-color: #111827; /* Near black background matching spec */
+  color: #ffffff;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
   border: none;
-  border-radius: 6px;
-  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: opacity 0.2s;
 }
 
 .form-submit:hover {
-  background-color: #1d4ed8;
+  opacity: 0.9;
 }
 
-.auth-toggle {
-  margin-top: 16px;
-  text-align: center;
-  font-size: 14px;
-  color: #4b5563;
-}
-
-.auth-toggle a {
-  color: #2563eb;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.auth-toggle a:hover {
-  text-decoration: underline;
+.form-submit:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
