@@ -129,6 +129,12 @@ export const getChat = (chatId: string): Promise<ApiResponse<{ chat: Chat; messa
   return request<{ chat: Chat; messages: Message[] }>(`${BASE_URL}/chats/${chatId}`);
 };
 
+export const deleteChat = (chatId: string): Promise<ApiResponse<{ message: string }>> => {
+  return request<{ message: string }>(`${BASE_URL}/chats/${chatId}`, {
+    method: "DELETE",
+  });
+};
+
 export const sendMessage = (chatId: string, question: string): Promise<ApiResponse<Message[]>> => {
   return request<Message[]>(`${BASE_URL}/chats/${chatId}/messages`, {
     method: "POST",

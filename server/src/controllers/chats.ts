@@ -109,19 +109,49 @@ export const getChatById = async (
   }
 };
 
-export const updateChat = async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
-  try { 
-    res.status(501).json({ 
-      success: false, 
-      data: null,
-      error: { message: 'Not implemented yet.' } 
-    }); 
-  } catch (e) { 
-    _next(e); 
+export const deleteChat = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        data: null,
+        error: { message: 'Unauthorized access. Missing user identity.' }
+      });
+      return;
+    }
+
+    const chat = await Chat.findOne({ _id: String(id), userId: String(userId) });
+
+    if (!chat) {
+      res.status(404).json({
+        success: false,
+        data: null,
+        error: { message: 'Chat not found or access denied.' }
+      });
+      return;
+    }
+
+    await Message.deleteMany({ chatId: chat._id });
+    await chat.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      data: { message: 'Chat history cleared successfully.' },
+      error: null
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const deleteChat = async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
+export const updateChat = async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
   try { 
     res.status(501).json({ 
       success: false, 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { useOutletContext } from "react-router-dom";
-import { getChats, createChat, getChat, sendMessage, type Chat as ChatType, type Message } from "../../utils/api";
+import { getChats, createChat, getChat, deleteChat, sendMessage, type Chat as ChatType, type Message } from "../../utils/api";
 import "./Chat.css";
 import plusIcon from "../../assets/plus.png";
 import errorIcon from "../../assets/error.png";
@@ -105,6 +105,20 @@ export default function Chat() {
     }
   };
 
+  const handleDeleteChat = async (e: React.MouseEvent, chatId: string) => {
+    e.stopPropagation();
+    try {
+      await deleteChat(chatId);
+      setChats((prev) => prev.filter((c) => c._id !== chatId));
+      if (activeChatId === chatId) {
+        setActiveChatId(null);
+        setMessages([]);
+      }
+    } catch {
+      alert("Failed to delete chat session.");
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -169,8 +183,25 @@ export default function Chat() {
                 setActiveChatId(c._id);
                 setIsMobileMenuOpen(false);
               }}
+              style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
             >
-              {c.title}
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {c.title}
+              </span>
+              <button
+                type="button"
+                onClick={(e) => handleDeleteChat(e, c._id)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "inherit",
+                  cursor: "pointer",
+                  padding: "0 4px",
+                  opacity: 0.6
+                }}
+              >
+                ✕
+              </button>
             </li>
           ))}
         </ul>
