@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { useOutletContext } from "react-router-dom";
 import { getChats, createChat, getChat, sendMessage, type Chat as ChatType, type Message } from "../../utils/api";
@@ -26,6 +26,8 @@ export default function Chat() {
 
   const [input, setInput] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
+
+  const messagesEndRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
     const loadSidebar = async () => {
@@ -60,6 +62,10 @@ export default function Chat() {
 
     loadMessages();
   }, [activeChatId]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isSending]);
 
   const handleSend = async () => {
     const text = input.trim();
@@ -235,6 +241,7 @@ export default function Chat() {
                     Thinking…
                   </li>
                 )}
+                <li ref={messagesEndRef} />
               </ul>
             )}
 
