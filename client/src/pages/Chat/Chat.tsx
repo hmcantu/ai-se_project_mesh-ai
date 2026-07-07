@@ -49,7 +49,7 @@ export default function Chat() {
       setIsLoadingMessages(true);
       setMessagesError("");
       try {
-        const res = await getChat(activeChatId!);
+        const res = await getChat(activeChatId);
         setMessages(res.data?.messages || []);
       } catch {
         setMessagesError("Failed to load messages.");
@@ -80,7 +80,10 @@ export default function Chat() {
     try {
       const res = await sendMessage(activeChatId, text);
       if (res.data) {
-        setMessages((prev) => [...prev, res.data!]);
+        setMessages((prev) => [
+          ...prev.filter((m) => m._id !== userMessage._id),
+          ...res.data!,
+        ]);
       }
     } catch {
       const errorMessage: Message = {
@@ -103,8 +106,8 @@ export default function Chat() {
     }
   };
 
-  const handleCreateChat = async () => {
-    const title = newChatTitle.trim() || "New Chat";
+  const handleCreateChat = async (forcedTitle?: string) => {
+    const title = forcedTitle || newChatTitle.trim() || "New Chat";
     setIsCreatingChat(false);
     setNewChatTitle("");
 
@@ -176,10 +179,7 @@ export default function Chat() {
             <button
               className="chat__prompt-btn"
               type="button"
-              onClick={() => {
-                setIsCreatingChat(true);
-                setIsMobileMenuOpen(true);
-              }}
+              onClick={() => handleCreateChat("New Chat")}
             >
               Start New Chat
             </button>
@@ -230,6 +230,11 @@ export default function Chat() {
                     )}
                   </li>
                 ))}
+                {isSending && (
+                  <li className="chat__message chat__message_assistant chat__message_thinking">
+                    Thinking…
+                  </li>
+                )}
               </ul>
             )}
 

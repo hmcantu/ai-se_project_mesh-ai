@@ -23,7 +23,6 @@ export const createEmbedding = async (text: string): Promise<number[]> => {
     throw new Error('Critical Error: NEBIUS_API_KEY is completely missing from process.env inside embeddings.ts');
   }
 
-  // Bypassing the OpenAI SDK entirely to communicate directly with Nebius endpoints
   const response = await fetch('https://api.studio.nebius.ai/v1/embeddings', {
     method: 'POST',
     headers: {

@@ -5,7 +5,7 @@ import { DocumentModel } from '../models/document.js';
 import { Chunk } from '../models/chunk.js';
 import { createEmbedding } from '../utils/embeddings.js';
 import { rankBySimilarity } from '../utils/vector-search.js';
-import { getClient, LLM_MODEL, buildContext } from '../utils/openai-client.js';
+import { getClient, LLM_MODEL, buildContext, stripThinking } from '../utils/openai-client.js'; // 👈 Added stripThinking here
 
 export const createMessage = async (
   req: Request,
@@ -14,7 +14,7 @@ export const createMessage = async (
 ): Promise<void> => {
   try {
     const { question } = req.body;
-    const chatId = req.params.id;
+    const chatId = req.params.id; // 👈 Mapped back to match your chatRoutes.ts parameter perfectly
     
     // 🎯 1. Extract and validate userId right away at the very top of the function scope
     const userId = req.user?.userId;
@@ -38,7 +38,6 @@ export const createMessage = async (
     }
 
     // 3. Verify the chat exists and belongs to the logged-in user
-    // (Duplicate userId extraction block removed from here completely!)
     const chat = await Chat.findOne({ _id: String(chatId), userId: String(userId) });
     if (!chat) {
       res.status(404).json({
@@ -81,7 +80,8 @@ export const createMessage = async (
       ],
     });
 
-    const answer = chatCompletion.choices[0]?.message?.content || 'Unable to generate an answer.';
+    const rawAnswer = chatCompletion.choices[0]?.message?.content || 'Unable to generate an answer.';
+    const answer = stripThinking(rawAnswer); // 👈 Wrapped to seamlessly clean out the <think> blocks
 
     // 7. Save the question as a user message linked to this chat
     const userMessage = new Message({

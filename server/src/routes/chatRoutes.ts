@@ -13,6 +13,6 @@ router.get('/', chatCtrl.getChats);
 router.get('/:id', chatCtrl.getChatById); // This handles GET /chats/:id and returns chat + history
 router.patch('/:id', chatCtrl.updateChat);
 router.delete('/:id', chatCtrl.deleteChat);
-router.post('/:id/messages', createMessage); // Updated to use your live message persistence handler
+router.post('/:id/messages', createMessage);
 
 export default router;
