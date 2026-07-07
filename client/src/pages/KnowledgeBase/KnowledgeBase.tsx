@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./KnowledgeBase.css";
 import UploadArea from "../../components/UploadArea/UploadArea";
-import { getDocuments, uploadDocument, type KnowledgeDoc } from "../../utils/api";
+import { getDocuments, uploadDocument, deleteDocument, type KnowledgeDoc } from "../../utils/api";
 
 export default function KnowledgeBase() {
   const [documents, setDocuments] = useState<KnowledgeDoc[]>([]);
@@ -37,8 +37,13 @@ export default function KnowledgeBase() {
     };
   }, []);
 
-  const handleRemoveDocument = (id: string) => {
-    setDocuments((prev) => prev.filter((d) => d._id !== id));
+  const handleRemoveDocument = async (id: string) => {
+    try {
+      await deleteDocument(id);
+      setDocuments((prev) => prev.filter((d) => d._id !== id));
+    } catch (err: any) {
+      alert(err?.message || "Failed to delete the document from the server.");
+    }
   };
 
   const handleFileUploaded = async (file: File) => {

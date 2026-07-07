@@ -16,7 +16,6 @@ export const uploadDocument = async (
   try {
     const userId = req.user?.userId;
 
-    // 1. Verify that Multer successfully captured a file
     if (!req.file) {
       res.status(400).json({
         success: false,
@@ -31,11 +30,9 @@ export const uploadDocument = async (
     const title = req.body.title || req.file.originalname;
     const fileName = req.file.filename;
 
-    // 2. Resolve the staged file path and parse text out of the PDF properly
     const filePath = path.join(process.cwd(), 'uploads', fileName);
     const dataBuffer = fs.readFileSync(filePath);
     
-    // Decompresses and extracts the real text cleanly from the PDF binary
     const parsedPdf = await pdf(dataBuffer);
     const extractedText = parsedPdf.text;
 
@@ -50,7 +47,6 @@ export const uploadDocument = async (
       return;
     }
 
-    // 3. Create a Document record in MongoDB tracking the reference
     const newDoc = new DocumentModel({
       title,
       fileName,
@@ -58,10 +54,8 @@ export const uploadDocument = async (
     });
     await newDoc.save();
 
-    // 4. Break the extracted text into 500-character segments
     const textChunks = chunkText(extractedText);
 
-    // 5. Fire async embedding requests and build sub-records concurrently
     await Promise.all(
       textChunks.map(async (text) => {
         const embedding = await createEmbedding(text);
@@ -73,7 +67,6 @@ export const uploadDocument = async (
       })
     );
 
-    // 6. Return standard envelope response
     res.status(201).json({
       success: true,
       data: newDoc,
@@ -113,8 +106,57 @@ export const getDocuments = async (
   }
 };
 
-// Placeholders for remaining endpoints to prevent router compilation errors
-// 🎯 Added '_' prefix to unused 'next' parameters to guarantee flawless TS build execution
+export const deleteDocument = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        data: null,
+        error: { message: 'Unauthorized access. Missing user identity.' }
+      });
+      return;
+    }
+
+    const document = await DocumentModel.findOne({ 
+      _id: String(id), 
+      userId: String(userId) 
+    });
+
+    if (!document) {
+      res.status(404).json({
+        success: false,
+        data: null,
+        error: { message: 'Document not found or access denied.' }
+      });
+      return;
+    }
+
+    await Chunk.deleteMany({ documentId: document._id });
+
+    const filePath = path.join(process.cwd(), 'uploads', document.fileName);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    await document.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      data: { message: 'Document and associated vectors removed successfully.' },
+      error: null
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getDocumentById = async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
   try { 
     res.status(501).json({ 
@@ -128,18 +170,6 @@ export const getDocumentById = async (_req: Request, res: Response, _next: NextF
 };
 
 export const updateDocument = async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
-  try { 
-    res.status(501).json({ 
-      success: false, 
-      data: null,
-      error: { message: 'Not implemented.' } 
-    }); 
-  } catch (e) { 
-    _next(e); 
-  }
-};
-
-export const deleteDocument = async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
   try { 
     res.status(501).json({ 
       success: false, 

@@ -108,7 +108,11 @@ export const uploadDocument = async (file: File): Promise<ApiResponse<KnowledgeD
   return res.json();
 };
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const deleteDocument = (id: string): Promise<ApiResponse<{ message: string }>> => {
+  return request<{ message: string }>(`${BASE_URL}/documents/${id}`, {
+    method: "DELETE",
+  });
+};
 
 export const getChats = (): Promise<ApiResponse<Chat[]>> => {
   return request<Chat[]>(`${BASE_URL}/chats`);
