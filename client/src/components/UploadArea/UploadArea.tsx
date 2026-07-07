@@ -2,10 +2,16 @@ import React, { useState } from "react";
 import "./UploadArea.css";
 import logoIcon from "../../assets/logo.png";
 
-export default function UploadArea({ onFileSelect }: { onFileSelect: (file: File) => void }) {
+type Props = {
+  onFileSelect: (file: File) => void;
+  isUploading: boolean;
+};
+
+export default function UploadArea({ onFileSelect, isUploading }: Props) {
   const [isDragActive, setIsDragActive] = useState(false);
 
   const handleDrag = (e: React.DragEvent) => {
+    if (isUploading) return;
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -16,6 +22,7 @@ export default function UploadArea({ onFileSelect }: { onFileSelect: (file: File
   };
 
   const handleDrop = (e: React.DragEvent) => {
+    if (isUploading) return;
     e.preventDefault();
     e.stopPropagation();
     setIsDragActive(false);
@@ -39,7 +46,7 @@ export default function UploadArea({ onFileSelect }: { onFileSelect: (file: File
 
   return (
     <div 
-      className={`upload-area ${isDragActive ? "upload-area--active" : ""}`}
+      className={`upload-area ${isDragActive ? "upload-area--active" : ""} ${isUploading ? "upload-area--disabled" : ""}`}
       onDragEnter={handleDrag}
       onDragOver={handleDrag}
       onDragLeave={handleDrag}
@@ -52,10 +59,17 @@ export default function UploadArea({ onFileSelect }: { onFileSelect: (file: File
           className="upload-area__input"
           accept=".pdf"
           onChange={handleChange}
+          disabled={isUploading}
         />
         <img src={logoIcon} alt="Mesh AI Logo" className="upload-area__icon" />
         <p className="upload-area__text">
-          Drag'n'Drop or <span>Upload</span>
+          {isUploading ? (
+            "Uploading..."
+          ) : (
+            <>
+              Drag'n'Drop or <span>Upload</span>
+            </>
+          )}
         </p>
       </label>
     </div>
