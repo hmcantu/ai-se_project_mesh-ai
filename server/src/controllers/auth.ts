@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.js';
 
-// Helper to ensure JWT_SECRET exists
 const getJwtSecret = (): string => {
   if (!process.env.JWT_SECRET) {
     throw new Error('JWT_SECRET is missing from environment variables');
@@ -19,7 +18,6 @@ export const register = async (
   try {
     const { email, password, name } = req.body;
 
-    // 1. Validate presence
     if (!email || !password || !name) {
       res.status(400).json({ 
         success: false,
@@ -29,7 +27,6 @@ export const register = async (
       return;
     }
 
-    // 2. Validate password length
     if (password.length < 8) {
       res.status(400).json({ 
         success: false,
@@ -39,7 +36,6 @@ export const register = async (
       return;
     }
 
-    // 3. Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       res.status(409).json({ 
@@ -50,7 +46,6 @@ export const register = async (
       return;
     }
 
-    // 4. Hash password and save
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       email,
@@ -59,7 +54,6 @@ export const register = async (
     });
     await newUser.save();
 
-    // 5. Return 201 with standardized envelope layout
     res.status(201).json({
       success: true,
       data: {
@@ -82,7 +76,6 @@ export const login = async (
   try {
     const { email, password } = req.body;
 
-    // 1. Validate presence
     if (!email || !password) {
       res.status(400).json({ 
         success: false,
@@ -92,10 +85,8 @@ export const login = async (
       return;
     }
 
-    // Generic error message to prevent account enumeration attacks
     const invalidCredentialsMessage = 'Invalid email or password.';
 
-    // 2. Find user
     const user = await User.findOne({ email });
     if (!user) {
       res.status(401).json({ 
@@ -106,7 +97,6 @@ export const login = async (
       return;
     }
 
-    // 3. Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       res.status(401).json({ 
@@ -117,14 +107,12 @@ export const login = async (
       return;
     }
 
-    // 4. Sign JWT
     const token = jwt.sign(
       { userId: user._id.toString() },
       getJwtSecret(),
       { expiresIn: '24h' }
     );
 
-    // 5. Send 200 with standard layout format
     res.status(200).json({
       success: true,
       data: {
@@ -145,7 +133,7 @@ export const login = async (
 export const getCurrentUser = async (
   req: Request,
   res: Response,
-  _next: NextFunction // 🎯 Prefixed with '_' to satisfy strict unused parameter validation rules
+  _next: NextFunction
 ): Promise<void> => {
   try {
     if (!req.user || !req.user.userId) {

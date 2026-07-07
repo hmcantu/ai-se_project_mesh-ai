@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(logger);
 
 // 4. Routes
-app.use(router);
+app.use('/api', router);
 app.use(notFoundHandler);
 app.use(errorHandler);
 

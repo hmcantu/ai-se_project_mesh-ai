@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { CurrentUser } from "../types";
+import { getCurrentUser } from "../utils/api";
 
 interface AuthContextType {
   currentUser: CurrentUser | null;
@@ -19,34 +20,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAuthenticated = !!currentUser;
 
   useEffect(() => {
-    const checkSession = async () => {
-      const token = localStorage.getItem("token");
+    const checkSession = () => {
+      const token = localStorage.getItem("auth-token");
       if (!token) {
         setIsLoading(false);
         return;
       }
 
-      try {
-        // Temporary placeholder logic for session restoration.
-        // This will call the actual check-session API endpoint in the next lesson.
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Session verification failed:", error);
-        localStorage.removeItem("token");
-        setIsLoading(false);
-      }
+      getCurrentUser()
+        .then((res) => {
+          if (res.data) {
+            setCurrentUser(res.data);
+          }
+        })
+        .catch(() => {
+          localStorage.removeItem("auth-token");
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     };
 
     checkSession();
   }, []);
 
   const login = (token: string, user: CurrentUser) => {
-    localStorage.setItem("token", token);
+    localStorage.setItem("auth-token", token);
     setCurrentUser(user);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("auth-token");
     setCurrentUser(null);
   };
 

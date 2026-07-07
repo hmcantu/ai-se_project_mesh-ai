@@ -23,9 +23,64 @@ export type Message = {
 
 export type ApiResponse<T> = {
   success: boolean;
-  data: T | null;
-  error: { message: string } | null;
+  data?: T;
+  error?: { message: string } | null;
 };
+
+const BASE_URL = "/api";
+
+async function request<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<ApiResponse<T>> {
+  const token = localStorage.getItem("auth-token") ?? "";
+
+  const res = await fetch(path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...options.headers,
+    },
+  });
+
+  if (res.status === 401) {
+    const body = await res.json().catch(() => null);
+    const message = body?.error?.message || "Invalid credentials";
+    if (localStorage.getItem("auth-token")) {
+      localStorage.removeItem("auth-token");
+      window.location.href = "/login";
+    }
+    throw new Error(message);
+  }
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.error?.message || "Request failed");
+  }
+
+  return res.json();
+}
+
+export function registerUser(name: string, email: string, password: string) {
+  return request<{ user: import("../types").CurrentUser }>(`${BASE_URL}/auth/register`, {
+    method: "POST",
+    body: JSON.stringify({ name, email, password }),
+  });
+}
+
+export function loginUser(email: string, password: string) {
+  return request<{ token: string; user: import("../types").CurrentUser }>(`${BASE_URL}/auth/login`, {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export function getCurrentUser() {
+  return request<import("../types").CurrentUser>(`${BASE_URL}/auth/me`, {
+    method: "GET",
+  });
+}
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -53,7 +108,6 @@ export const getDocuments = async (): Promise<ApiResponse<KnowledgeDoc[]>> => {
   };
 };
 
-// Mock function to load existing conversations
 export const getChats = async (): Promise<ApiResponse<Chat[]>> => {
   await delay(500);
   return {
@@ -82,7 +136,6 @@ export const getChats = async (): Promise<ApiResponse<Chat[]>> => {
   };
 };
 
-// Mock function to create a new conversation thread
 export const createChat = async (title: string): Promise<ApiResponse<Chat>> => {
   await delay(300);
   return {
@@ -97,7 +150,6 @@ export const createChat = async (title: string): Promise<ApiResponse<Chat>> => {
   };
 };
 
-// Mock function to fetch messages for an active chat
 export const getChat = async (chatId: string): Promise<ApiResponse<{ _id: string; messages: Message[] }>> => {
   await delay(600);
   
@@ -126,9 +178,8 @@ export const getChat = async (chatId: string): Promise<ApiResponse<{ _id: string
   };
 };
 
-// Mock function to send a user message and get a simulated assistant response
 export const sendMessage = async (chatId: string, content: string): Promise<ApiResponse<Message>> => {
-  await delay(1500); // 1.5 second response delay requested by the lesson
+  await delay(1500);
   return {
     success: true,
     data: {
@@ -138,6 +189,6 @@ export const sendMessage = async (chatId: string, content: string): Promise<ApiR
       content: `This is a mock response to your question: "${content}". This area natively processes **markdown bold text**, lists, and code blocks seamlessly!`,
       createdAt: new Date().toISOString()
     },
-    error: null
+    error: null,
   };
 };

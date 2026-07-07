@@ -1,9 +1,10 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useFormWithValidation } from "../../hooks/useFormWithValidation";
+import { useAuth } from "../../contexts/AuthContext";
+import { loginUser } from "../../utils/api";
 import logoImg from "../../assets/logo.png";
 
-// Helper function to dynamically swap styling based on the active route
 function getNavLinkClass({ isActive }: { isActive: boolean }) {
   return isActive
     ? "auth-tab-link auth-tab-link--active"
@@ -11,14 +12,33 @@ function getNavLinkClass({ isActive }: { isActive: boolean }) {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [submitError, setSubmitError] = useState<string>("");
+
   const { values, handleChange, errors, isValid } = useFormWithValidation({
     email: "",
     password: "",
   });
 
-  const handleSubmit = (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Submitted successfully! Current values:", values);
+    setSubmitError("");
+
+    try {
+      const res = await loginUser(values.email, values.password);
+      
+      // Check both the data object and the success boolean flag from the backend layout
+      if (res.success && res.data) {
+        login(res.data.token, res.data.user);
+        navigate("/knowledge");
+      } else {
+        // Fallback to the specific backend error payload message if available
+        setSubmitError(res.error?.message || "Invalid credentials. Please try again.");
+      }
+    } catch (err: any) {
+      setSubmitError(err.message || "Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -33,21 +53,21 @@ export default function Login() {
           <p className="auth-subtitle">Access your organisation's secure workspace</p>
         </div>
 
-        {/* Updated NavLink structure utilizing the active checker */}
         <div className="auth-tabs">
-          <NavLink to="/login" className={getNavLinkClass}>
-            Login
-          </NavLink>
-          <NavLink to="/register" className={getNavLinkClass}>
-            Register
-          </NavLink>
+          <NavLink to="/login" className={getNavLinkClass}>Login</NavLink>
+          <NavLink to="/register" className={getNavLinkClass}>Register</NavLink>
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
+          {/* Status area for display server errors */}
+          {submitError && (
+            <div style={{ width: "380px", color: "#ef4444", marginBottom: "16px", fontFamily: "Work Sans", fontSize: "14px" }}>
+              {submitError}
+            </div>
+          )}
+
           <div className="form-group">
-            <label className="form-label" htmlFor="email">
-              Email
-            </label>
+            <label className="form-label" htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
@@ -62,9 +82,7 @@ export default function Login() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="password">
-              Password
-            </label>
+            <label className="form-label" htmlFor="password">Password</label>
             <input
               type="password"
               id="password"

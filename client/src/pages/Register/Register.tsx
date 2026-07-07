@@ -1,9 +1,9 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useFormWithValidation } from "../../hooks/useFormWithValidation";
+import { registerUser } from "../../utils/api";
 import logoImg from "../../assets/logo.png";
 
-// Helper function to dynamically swap styling based on the active route
 function getNavLinkClass({ isActive }: { isActive: boolean }) {
   return isActive
     ? "auth-tab-link auth-tab-link--active"
@@ -11,15 +11,37 @@ function getNavLinkClass({ isActive }: { isActive: boolean }) {
 }
 
 export default function Register() {
+  const navigate = useNavigate();
+  const [submitError, setSubmitError] = useState<string>("");
+  
   const { values, handleChange, errors, isValid } = useFormWithValidation({
     name: "",
     email: "",
     password: "",
   });
 
-  const handleSubmit = (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Registration Form Submitted! Current values:", values);
+    console.log("=== SUBMIT TRIGGERED ===");
+    console.log("Current Form values state:", values);
+    console.log("Is Form Valid check:", isValid);
+    
+    setSubmitError("");
+    
+    try {
+      const res = await registerUser(values.name, values.email, values.password);
+      console.log("Server Response payload arrived:", res);
+      
+      if (res.success) {
+        console.log("Registration successful! Redirecting...");
+        navigate("/login");
+      } else {
+        setSubmitError(res.error?.message || "Registration failed.");
+      }
+    } catch (err: any) {
+      console.error("Catch handler caught an error:", err);
+      setSubmitError(err.message || "An error occurred during registration.");
+    }
   };
 
   return (
@@ -34,21 +56,20 @@ export default function Register() {
           <p className="auth-subtitle">Access your organisation's secure workspace</p>
         </div>
 
-        {/* Updated NavLink structure utilizing the active checker */}
         <div className="auth-tabs">
-          <NavLink to="/login" className={getNavLinkClass}>
-            Login
-          </NavLink>
-          <NavLink to="/register" className={getNavLinkClass}>
-            Register
-          </NavLink>
+          <NavLink to="/login" className={getNavLinkClass}>Login</NavLink>
+          <NavLink to="/register" className={getNavLinkClass}>Register</NavLink>
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
+          {submitError && (
+            <div style={{ width: "380px", color: "#ef4444", marginBottom: "16px", fontFamily: "Work Sans", fontSize: "14px" }}>
+              {submitError}
+            </div>
+          )}
+
           <div className="form-group">
-            <label className="form-label" htmlFor="name">
-              Name
-            </label>
+            <label className="form-label" htmlFor="name">Name</label>
             <input
               type="text"
               id="name"
@@ -65,9 +86,7 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="email">
-              Email
-            </label>
+            <label className="form-label" htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
@@ -82,9 +101,7 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="password">
-              Password
-            </label>
+            <label className="form-label" htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
@@ -100,7 +117,8 @@ export default function Register() {
           </div>
 
           <div className="form-submit-container">
-            <button type="submit" className="form-submit" disabled={!isValid}>
+            {/* Temporarily removed disabled={!isValid} to ensure it fires logs */}
+            <button type="submit" className="form-submit" style={{ width: "164px" }}>
               Create account
             </button>
           </div>
