@@ -13,6 +13,7 @@ function getNavLinkClass({ isActive }: { isActive: boolean }) {
 export default function Register() {
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
   const { values, handleChange, errors, isValid } = useFormWithValidation({
     name: "",
@@ -22,25 +23,23 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("=== SUBMIT TRIGGERED ===");
-    console.log("Current Form values state:", values);
-    console.log("Is Form Valid check:", isValid);
+    if (!isValid || isSubmitting) return;
     
     setSubmitError("");
+    setIsSubmitting(true);
     
     try {
       const res = await registerUser(values.name, values.email, values.password);
-      console.log("Server Response payload arrived:", res);
       
       if (res.success) {
-        console.log("Registration successful! Redirecting...");
         navigate("/login");
       } else {
         setSubmitError(res.error?.message || "Registration failed.");
       }
     } catch (err: any) {
-      console.error("Catch handler caught an error:", err);
       setSubmitError(err.message || "An error occurred during registration.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -81,6 +80,7 @@ export default function Register() {
               value={values.name || ""}
               onChange={handleChange}
               placeholder="John Doe"
+              disabled={isSubmitting}
             />
             {errors.name && <span className="error-message">{errors.name}</span>}
           </div>
@@ -96,6 +96,7 @@ export default function Register() {
               value={values.email || ""}
               onChange={handleChange}
               placeholder="johndoe12345@gmail.com"
+              disabled={isSubmitting}
             />
             {errors.email && <span className="error-message">{errors.email}</span>}
           </div>
@@ -112,14 +113,19 @@ export default function Register() {
               value={values.password || ""}
               onChange={handleChange}
               placeholder="12345678"
+              disabled={isSubmitting}
             />
             {errors.password && <span className="error-message">{errors.password}</span>}
           </div>
 
           <div className="form-submit-container">
-            {/* Temporarily removed disabled={!isValid} to ensure it fires logs */}
-            <button type="submit" className="form-submit" style={{ width: "164px" }}>
-              Create account
+            <button 
+              type="submit" 
+              className="form-submit" 
+              style={{ width: "164px" }}
+              disabled={!isValid || isSubmitting}
+            >
+              {isSubmitting ? "Creating Account..." : "Create account"}
             </button>
           </div>
         </form>

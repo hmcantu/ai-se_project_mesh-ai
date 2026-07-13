@@ -57,32 +57,52 @@ export default function Header({ onMenuOpen, onMenuClose, isMobileMenuOpen }: Pr
             Chat
           </NavLink>
 
-          {/* Account Dropdown Area */}
           <div className="header__dropdown-container" style={{ position: "relative", display: "inline-block" }} onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
-              className="header__dropdown-btn"
+              className="header__account-btn"
               aria-haspopup="menu"
               aria-expanded={isAccountMenuOpen}
               onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
             >
-              {currentUser?.name || "Account"}'s Account
+              <span className="header__account-name">
+                {currentUser?.name ? `${currentUser.name}'s Account` : "Account's Account"}
+              </span>
+              <svg 
+                className={`header__chevron-icon ${isAccountMenuOpen ? 'header__chevron-icon_open' : ''}`} 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M6 9L12 15L18 9" stroke="#1C1C1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
 
             {isAccountMenuOpen && (
-              <ul className="header__menu" role="menu" style={{ position: "absolute", right: 0, background: "white", listStyle: "none", padding: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.15)", borderRadius: "4px", zIndex: 10 }}>
-                <li role="none">
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className="header__menu-item"
-                    onClick={handleLogout}
-                    style={{ background: "none", border: "none", cursor: "pointer", color: "#ef4444", width: "100%", textAlign: "left", padding: "4px 8px" }}
+              <div className="header__dropdown-menu" role="menu">
+                <button 
+                  type="button" 
+                  role="menuitem"
+                  className="header__dropdown-item" 
+                  onClick={handleLogout}
+                >
+                  <span className="header__logout-text">Logout</span>
+                  <svg 
+                    className="header__logout-icon" 
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    Logout
-                  </button>
-                </li>
-              </ul>
+                    <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="#FA5A5A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M16 17L21 12L16 7" stroke="#FA5A5A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M21 12H9" stroke="#FA5A5A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
             )}
           </div>
         </nav>
