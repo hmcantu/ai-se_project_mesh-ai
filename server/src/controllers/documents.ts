@@ -7,6 +7,7 @@ import { DocumentModel } from '../models/document.js';
 import { Chunk } from '../models/chunk.js';
 import { chunkText } from '../utils/chunk.js';
 import { createEmbedding } from '../utils/embeddings.js';
+import { getCacheValue, setCacheValue, deleteCacheValue } from '../utils/cache.js';
 
 export const uploadDocument = async (
   req: Request,
@@ -67,6 +68,10 @@ export const uploadDocument = async (
       })
     );
 
+    if (userId) {
+      deleteCacheValue(`documents-list:${userId}`);
+    }
+
     res.status(201).json({
       success: true,
       data: newDoc,
@@ -94,13 +99,25 @@ export const getDocuments = async (
       return;
     }
 
+    const cacheKey = `documents-list:${userId}`;
+    const cached = getCacheValue<any>(cacheKey);
+
+    if (cached) {
+      res.status(200).json(cached);
+      return;
+    }
+
     const documents = await DocumentModel.find({ userId: String(userId) });
 
-    res.status(200).json({
+    const responseData = {
       success: true,
       data: documents,
       error: null
-    });
+    };
+
+    setCacheValue(cacheKey, responseData, 30 * 1000);
+
+    res.status(200).json(responseData);
   } catch (error) {
     next(error);
   }
@@ -146,6 +163,8 @@ export const deleteDocument = async (
     }
 
     await document.deleteOne();
+
+    deleteCacheValue(`documents-list:${userId}`);
 
     res.status(200).json({
       success: true,
