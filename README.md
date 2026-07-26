@@ -21,4 +21,5 @@ Prerequisites: Node.js 20+, Docker
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/hmcantu/ai-se_project_mesh-ai.git](https://github.com/hmcantu/ai-se_project_mesh-ai.git)
+   git clone https://github.com/hmcantu/ai-se_project_mesh-ai.git
+   ```
