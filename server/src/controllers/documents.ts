@@ -100,7 +100,7 @@ export const getDocuments = async (
     }
 
     const cacheKey = `documents-list:${userId}`;
-    const cached = getCacheValue<any>(cacheKey);
+    const cached = getCacheValue<unknown>(cacheKey);
 
     if (cached) {
       res.status(200).json(cached);

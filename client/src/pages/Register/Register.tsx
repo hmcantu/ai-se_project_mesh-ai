@@ -36,8 +36,9 @@ export default function Register() {
       } else {
         setSubmitError(res.error?.message || "Registration failed.");
       }
-    } catch (err: any) {
-      setSubmitError(err.message || "An error occurred during registration.");
+    } catch (err: unknown) {
+      const errorObj = err as Error;
+      setSubmitError(errorObj.message || "An error occurred during registration.");
     } finally {
       setIsSubmitting(false);
     }

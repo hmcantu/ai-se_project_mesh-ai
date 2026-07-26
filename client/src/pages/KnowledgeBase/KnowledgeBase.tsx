@@ -11,8 +11,6 @@ export default function KnowledgeBase() {
 
   useEffect(() => {
     let isMounted = true;
-    setIsLoading(true);
-    setError(null);
 
     getDocuments()
       .then((res) => {
@@ -21,9 +19,10 @@ export default function KnowledgeBase() {
           setDocuments(res.data);
         }
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         if (isMounted) {
-          setError(err?.message || "Failed to load documents.");
+          const errorObj = err as Error;
+          setError(errorObj?.message || "Failed to load documents.");
         }
       })
       .finally(() => {
@@ -41,8 +40,9 @@ export default function KnowledgeBase() {
     try {
       await deleteDocument(id);
       setDocuments((prev) => prev.filter((d) => d._id !== id));
-    } catch (err: any) {
-      alert(err?.message || "Failed to delete the document from the server.");
+    } catch (err: unknown) {
+      const errorObj = err as Error;
+      alert(errorObj?.message || "Failed to delete the document from the server.");
     }
   };
 
@@ -54,8 +54,9 @@ export default function KnowledgeBase() {
       if (res.success && res.data) {
         setDocuments((prev) => [res.data!, ...prev]);
       }
-    } catch (err: any) {
-      setError(err?.message || "Something went wrong during file upload.");
+    } catch (err: unknown) {
+      const errorObj = err as Error;
+      setError(errorObj?.message || "Something went wrong during file upload.");
     } finally {
       setIsUploading(false);
     }

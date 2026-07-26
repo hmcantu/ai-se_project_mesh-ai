@@ -36,8 +36,9 @@ export default function Login() {
         // Fallback to the specific backend error payload message if available
         setSubmitError(res.error?.message || "Invalid credentials. Please try again.");
       }
-    } catch (err: any) {
-      setSubmitError(err.message || "Something went wrong. Please try again.");
+    } catch (err: unknown) {
+      const errorObj = err as Error;
+      setSubmitError(errorObj.message || "Something went wrong. Please try again.");
     }
   };
 
