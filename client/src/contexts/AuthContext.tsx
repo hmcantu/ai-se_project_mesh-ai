@@ -32,8 +32,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // If the utility helper returned the user object directly inside the data envelope layer
           if (res && res.data) {
             setCurrentUser(res.data);
-          } else if (res && (res as any).user) {
-            setCurrentUser((res as any).user);
+          } else if (res && (res as Record<string, unknown>).user) {
+            setCurrentUser((res as Record<string, unknown>).user as CurrentUser);
           }
         })
         .catch(() => {

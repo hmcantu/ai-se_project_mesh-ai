@@ -6,7 +6,7 @@ export const getCurrentUser = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = (req as any).user?.userId;
+    const userId = (req as Request & { user?: { userId?: string } }).user?.userId;
 
     if (!userId) {
       res.status(401).json({
@@ -37,11 +37,12 @@ export const getCurrentUser = async (
       },
       error: null,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     res.status(500).json({
       success: false,
       data: null,
-      error: { message: error.message || "Internal Server Error" },
+      error: { message: err.message || "Internal Server Error" },
     });
   }
 };

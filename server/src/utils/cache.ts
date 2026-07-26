@@ -3,7 +3,7 @@ type CacheEntry<T> = {
   expiry: number;
 };
 
-const store = new Map<string, CacheEntry<any>>();
+const store = new Map<string, CacheEntry<unknown>>();
 
 export function getCacheValue<T>(key: string): T | null {
   const entry = store.get(key);
@@ -14,7 +14,7 @@ export function getCacheValue<T>(key: string): T | null {
     return null;
   }
 
-  return entry.value;
+  return entry.value as T;
 }
 
 export function setCacheValue<T>(key: string, value: T, ttlMs: number): void {
