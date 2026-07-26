@@ -14,6 +14,7 @@ logger.info(`NEBIUS_API_KEY: ${apiKey ? `${apiKey.substring(0, 7)}...` : "❌ un
 
 // 2. Constants & App Setup
 const app = express();
+app.set('trust proxy', 1);
 const port = Number(process.env.PORT || 3000);
 
 // 3. Global Middleware
@@ -33,7 +34,7 @@ app.use('/api', router);
 app.use(notFoundHandler);
 
 // Custom Error Handler wrapper to ensure Winston logs errors with stack traces
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: any, req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error(err.message || 'Internal Error', { stack: err.stack });
   errorHandler(err, req, res);
 });
