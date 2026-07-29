@@ -23,3 +23,8 @@ Prerequisites: Node.js 20+, Docker
    ```bash
    git clone https://github.com/hmcantu/ai-se_project_mesh-ai.git
    ```
+## Project Pitch Video
+
+Check out this video, where I describe my project and some challenges I faced while building Mesh AI:
+
+- [Hailey_Cantu_ProjectPitch_MeshAI](https://drive.google.com/file/d/1rAqIUSvHg_0uTi62tplPVl7_4tpYQQMq/view?usp=sharing)
