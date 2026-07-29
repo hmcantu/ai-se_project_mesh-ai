@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import { logger } from '../utils/logger.js';
 
 export const notFoundHandler = (
   req: Request,
@@ -18,7 +19,9 @@ export const errorHandler = (
   _req: Request,
   res: Response
 ): void => {
-  console.error(err);
+  logger.error(err.message || 'An unexpected error occurred on the server.', {
+    stack: err.stack
+  });
 
   const statusCode = err.status || 500;
 
